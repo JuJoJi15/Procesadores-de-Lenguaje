@@ -95,7 +95,7 @@ variable = [a-zA-Z\_][a-zA-Z0-9\_]*
 
     [\"]    {yybegin(COMILLAI);}
 
-    [^\+]         {System.out.print(yytext());}
+    [^\+\s]         {System.out.print(yytext());}
 
     [^]            {}
 
@@ -103,7 +103,9 @@ variable = [a-zA-Z\_][a-zA-Z0-9\_]*
 
 <COMILLAI>{
     
-    [\"]    {yybegin(IMPRIMIR);}
+    \\\"    {System.out.print(yytext());}
+
+    \"    {yybegin(IMPRIMIR);}
 
     [^]     {System.out.print(yytext());}
     
