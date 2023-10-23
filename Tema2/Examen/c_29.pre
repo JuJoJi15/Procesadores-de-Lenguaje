@@ -1,0 +1,5 @@
+Una línea
+#define clave valor #define con espacio
+una más
+otro ${clave} en línea.
+

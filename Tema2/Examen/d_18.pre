@@ -1,0 +1,8 @@
+Una línea
+#define clave valor
+una más
+#ifdef clave
+Sigue ${clave} aquí.
+#endif
+otra línea.
+

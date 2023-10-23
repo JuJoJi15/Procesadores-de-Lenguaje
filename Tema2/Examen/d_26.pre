@@ -1,0 +1,9 @@
+Una línea
+#defines clave valor
+una más
+#ifdef clave
+Sigue ${valor} aquí.
+#endifs
+Una más
+#endif
+Y otra

@@ -1,0 +1,8 @@
+Una línea
+#define clave valor
+una más
+#ifdef clave esto #define se ignora
+Sigue aquí.
+#endif
+otra línea.
+
