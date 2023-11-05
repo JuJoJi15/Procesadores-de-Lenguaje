@@ -1,0 +1,5 @@
+Una línea
+#define clave valor
+una más
+otra ${clave} línea.
+
