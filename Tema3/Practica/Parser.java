@@ -61,6 +61,11 @@ class Parser {
 				L();
 				avanza(Yytoken.EOF);
 				break;
+			case Yytoken.DO:
+				Yytoken.regla(0);
+				L();
+				avanza(Yytoken.EOF);
+				break;
 			default:
 				Yytoken.error(token);
 
