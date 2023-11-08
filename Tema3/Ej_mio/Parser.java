@@ -1,11 +1,13 @@
 import java.io.FileReader;
+import java.io.IOException;
 import java.text.ParseException;
 
 public class Parser {
     private static Yytoken actual;
+    private static Yylex lex;
 
-    public static void main(String[] argv) {
-        Yylex lex = null;
+    public static void main(String[] argv) throws ParseException, IOException {
+        lex = null;
         if (argv.length > 0) {
             lex = new Yylex(new FileReader(argv[0]));
 
@@ -14,13 +16,13 @@ public class Parser {
         }
     }
 
-    private static void checkActual() throws ParseException {
+    private static void checkActual() throws ParseException, IOException {
         if (actual == null) {
             throw new ParseException("Fin de fichero inexperado", lex.linea);
         }
     }
 
-    private static void avanzar(int token, String mensaje) {
+    private static void avanzar(int token, String mensaje) throws ParseException, IOException {
         if (actual.getToken() == token) {
             actual = lex.yylex();
         } else {
@@ -28,7 +30,7 @@ public class Parser {
         }
     }
 
-    private static void S() throws ParseException {
+    private static void S() throws ParseException, IOException {
         checkActual();
         switch (actual.getToken()) {
             case Yytoken.AP:
@@ -38,13 +40,15 @@ public class Parser {
             case Yytoken.N:
                 E();
                 avanzar(Yytoken.DOLAR, "ERROR");
-            default:
-                throw new ParseException("Error", lex.linea);
                 break;
+            default:
+                System.out.println(lex.linea);
+                throw new ParseException("Error", lex.linea);
+
         }
     }
 
-    private static void E() throws ParseException {
+    private static void E() throws ParseException, IOException {
         checkActual();
         switch (actual.getToken()) {
             case Yytoken.N:
@@ -57,11 +61,11 @@ public class Parser {
                 break;
             default:
                 throw new ParseException("Error", lex.linea);
-                break;
+
         }
     }
 
-    private static void E2() throws ParseException {
+    private static void E2() throws ParseException, IOException {
         checkActual();
         switch (actual.getToken()) {
             case Yytoken.CP:
@@ -75,11 +79,11 @@ public class Parser {
                 break;
             default:
                 throw new ParseException("Error", lex.linea);
-                break;
+
         }
     }
 
-    private static void T() throws ParseException {
+    private static void T() throws ParseException, IOException {
         checkActual();
         switch (actual.getToken()) {
             case Yytoken.N:
@@ -91,7 +95,7 @@ public class Parser {
                 avanzar(Yytoken.CP, "ERROR");
             default:
                 throw new ParseException("Error", lex.linea);
-                break;
+
         }
     }
 

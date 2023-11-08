@@ -11,7 +11,6 @@ public class Parser {
      * primer argumento, si no se le pasa ningun argumento usa la entrada estandar.
      */
     private static Yytoken actual;
-    private static Yylex lex;
 
     private static void checkActual() throws ParseException, IOException {
         if (actual == null) {
@@ -28,11 +27,14 @@ public class Parser {
     }
 
     public static void main(String arg[]) throws ParseException, IOException {
+        private static Yylex lex;
         lex = null;
         try {
             if (arg.length > 0) {
                 lex = new Yylex(new FileReader(arg[0]));
+                if (arg.length > 1) {
 
+                }
             } else {
                 lex = new Yylex(new BufferedReader(new InputStreamReader(System.in)));
             }
@@ -60,7 +62,6 @@ public class Parser {
                 avanzar(Yytoken.DOLAR, "ERROR");
                 break;
             default:
-
                 throw new ParseException("Error", lex.linea);
 
         }

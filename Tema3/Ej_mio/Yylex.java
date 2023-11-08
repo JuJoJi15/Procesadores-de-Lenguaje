@@ -5,6 +5,7 @@
 
 
 
+
 @SuppressWarnings("fallthrough")
 class Yylex {
 
@@ -270,6 +271,9 @@ class Yylex {
   /** Whether the user-EOF-code has already been executed. */
   @SuppressWarnings("unused")
   private boolean zzEOFDone;
+
+  /* user code: */
+    public int linea = 0;
 
 
   /**
@@ -631,27 +635,27 @@ class Yylex {
           // fall through
           case 7: break;
           case 2:
-            { return new Yytoken(Yytoken.DOLAR,0);
+            { linea++;return new Yytoken(Yytoken.DOLAR,0);
             }
           // fall through
           case 8: break;
           case 3:
-            { return new Yytoken(Yytoken.AP,0);
+            { linea++;return new Yytoken(Yytoken.AP,0);
             }
           // fall through
           case 9: break;
           case 4:
-            { return new Yytoken(Yytoken.CP,0);
+            { linea++;return new Yytoken(Yytoken.CP,0);
             }
           // fall through
           case 10: break;
           case 5:
-            { return new Yytoken(Yytoken.MAS,0);
+            { linea++;return new Yytoken(Yytoken.MAS,0);
             }
           // fall through
           case 11: break;
           case 6:
-            { return new Yytoken(Yytoken.N,0);
+            { linea++;return new Yytoken(Yytoken.N,0);
             }
           // fall through
           case 12: break;

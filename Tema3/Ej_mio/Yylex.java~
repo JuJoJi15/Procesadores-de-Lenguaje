@@ -5,6 +5,7 @@
 
 
 
+
 @SuppressWarnings("fallthrough")
 class Yylex {
 
@@ -270,6 +271,9 @@ class Yylex {
   /** Whether the user-EOF-code has already been executed. */
   @SuppressWarnings("unused")
   private boolean zzEOFDone;
+
+  /* user code: */
+    public int linea = 0;
 
 
   /**
