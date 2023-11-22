@@ -1,8 +1,10 @@
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.text.ParseException;
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 
 public class Parser {
     /**
@@ -11,7 +13,8 @@ public class Parser {
      * primer argumento, si no se le pasa ningun argumento usa la entrada estandar.
      */
     private static Yytoken actual;
-
+    private static Yylex lex;
+    
     private static void checkActual() throws ParseException, IOException {
         if (actual == null) {
             throw new ParseException("Fin de fichero inexperado", lex.linea);
@@ -27,22 +30,24 @@ public class Parser {
     }
 
     public static void main(String arg[]) throws ParseException, IOException {
-        private static Yylex lex;
+        PrintStream out;
         lex = null;
         try {
             if (arg.length > 0) {
                 lex = new Yylex(new FileReader(arg[0]));
-                if (arg.length > 1) {
-
-                }
             } else {
                 lex = new Yylex(new BufferedReader(new InputStreamReader(System.in)));
+            }
+            if (arg.length > 1) {
+                    out = new PrintStream(new FileOutputStream(arg[1]));
+            }else{
+                out = System.out;
             }
 
             if (lex != null) {
                 actual = lex.yylex();
                 S();
-                System.out.print("OK");
+                out.print("OK");
             }
 
         } catch (IOException e) {
