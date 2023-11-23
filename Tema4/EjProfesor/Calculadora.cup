@@ -1,0 +1,63 @@
+// Calculadora (version 2) 
+import java_cup.runtime.*;
+
+parser code {:  
+
+    public void syntax_error(Symbol cur_token){
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token){
+        System.err.println("Syntax error en linea" + Calculadora.lex.getLine() + ", columna " + Calculadora.lex.getColumna() + " con el token "+ sym.terminalNames[cur_token.sym]);
+        // report_error("Syntax error", null);
+        done_parsing();
+    }
+
+
+:}
+
+action code {: HashMap<String,Integer> tabla; :}
+init with {: action_onj.tabla = new HashMap<String,Integer>(); :}
+
+/* Terminales */
+terminal            MAS, MENOS, MULT, DIVID, MENOSUNARIO, IGUAL;
+terminal            AP, CP;
+terminal            PYC;
+terminal String     ID;
+terminal int        NUMERO;
+
+/* No terminales */
+
+non terminal listaExp;
+non terminal lista;
+non terminal exp;
+non terminal List<int> listaVa; //Opcion 2 : String
+
+/* Precedencia */
+precedence left MAS,MENOS;
+precedence left MULT,DIVID;
+precedence left MENOSUNARIO;
+
+/* Gramatica */
+listaExp  ::= listaExp linea
+            | linea 
+            ;
+
+linea ::= exp:e PYC         {: Calculadora.out.println(e); :}
+        | PYC 
+        | AC listaVa:l CC PYC  {: l.println(); :} // print("["+l+"]"); // Opcion 3: AC {: print("["); :} listaVa CC {: print("]"); :}
+        ;
+
+exp ::= exp:e1 MAS exp:e2       {: RESULT = e1+e2; :}
+      | exp:e1 MENOS exp:e2       {: RESULT = e1-e2; :}
+      | exp:e1 MULT exp:e2       {: RESULT = e1*e2; :}
+      | exp:e1 DIVID exp:e2       {: RESULT = e1/e2; :}
+      | MENOS exp:e1       {: RESULT = -1*e1; :} %prec MENOSUNARIO
+      | AP exp:e1 CP        {: RESULT = e1; :}
+      | NUMERO:n            {: RESULT = n; :}
+      | ID:i                {: if(tabla.containsKey(i)){ RESULT = tabla.get(i);}else{RESULT = 0;} :}
+      | ID IGUAL exp:e    {: tabla.put(i,e); RESULT = e; :}
+      ;
+
+listaVa ::= listaVa:l COMA exp:e  {:  l.add(e); RESULT = l; :} // RESULT = l+","+e; // print(","+e);
+          | exp:e {: List<int> l = new LinkedList<int>(); l.add(e); RESULT = l; :} //RESULT = e; //{: print(e); :}
+          ;
