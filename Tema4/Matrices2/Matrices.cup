@@ -1,0 +1,121 @@
+// Matrices
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+action code {:
+
+    
+    ArrayList<ArrayList<Double>> matrizA = new ArrayList();
+    ArrayList<Double> fila = new ArrayList();
+    boolean excepcion = false;
+
+    double[][] matriz;
+
+    public double[][] crearMatriz(){
+        double[][] matriz = null;
+
+        try{
+            matriz = Matrices.toArray(matrizA);
+        }catch(Exception e){
+            System.out.println(Matrices.ERROR_FILAS);
+        }
+        return matriz;
+    }
+    
+    public boolean esMatriz(double[][] e){
+        return true;
+    }
+
+    public boolean esMatriz(double[] e){
+        return false;
+    }
+
+    public double[][] multiplicar(double[][] e1, double[][] e2){
+        if(Matrices.columnas(e1) == Matrices.filas(e2)){return Matrices.producto(e1,e2);}else{return null;}
+    }
+
+    public double[][] multiplicar(double[] e1, double[][] e2){
+        if(Matrices.dim(e1) == Matrices.filas(e2)){return Matrices.producto(e1,e2);}else{ return null;}
+    }
+
+    public double[][] multiplicar(double[][] e1, double[] e2){
+        if(Matrices.columnas(e1) == Matrices.dim(e2)){return Matrices.producto(e1,e2);}else{return null;}
+    }
+    
+:}
+
+/* Terminales */
+terminal            MAS, MENOS, POR, DIV, ASIG, CONCATENA;
+terminal            AP, CP, ALL, CLL, AC, CC;
+terminal            COMA, PYC;
+terminal            MATRIZ, VECTOR;
+terminal            INVERSA, TRANSPUESTA, ADJUNTA, PRINT;
+terminal double    NUMERO; 
+terminal String IDENT;
+
+/* No terminales */
+non terminal         listaExp;
+non terminal         linea;
+non terminal         matriz;
+non terminal         fila;
+non terminal double[][]  exp;
+non terminal double[] vect;
+/* Precedencia */
+precedence left PRINT;
+precedence left IDENT;
+precedence left INVERSA, TRANSPUESTA, ADJUNTA;
+precedence left ASIG;
+precedence left COMA;
+precedence left MAS, MENOS;
+precedence left POR, DIV;
+precedence left AP,CP;
+precedence left AC, CC;
+precedence left ALL,CLL;
+precedence left CONCATENA;
+
+/* Gramatica */
+listaExp  ::= listaExp linea      
+            | linea 
+            ;
+linea	  ::= exp PYC            
+            | IDENT:id ASIG exp:e {: TablaSimbolos.insertar(id,e);:} PYC      
+            | IDENT:id ASIG vect:v {: TablaSimbolos.insertarVector(id,e); :}  PYC         
+            ;
+exp       ::= IDENT:id       {: RESULT = TablaSimbolos.buscar(id); :}
+            | PRINT AP exp:e CP {: if(e != null && !excepcion){Matrices.print(e);} :}
+            | TRANSPUESTA AP exp:e CP {: if(e != null && !excepcion){RESULT = Matrices.transpuesta(e);}    :}
+            | INVERSA AP exp:e CP {: if(e != null && Matrices.filas(e)==Matrices.columnas(e) && !excepcion){RESULT = Matrices.inversa(e);}else{System.out.println(Matrices.ERROR_INVERSA); excepcion = true;} :}
+            | ADJUNTA AP exp:e CP {: if(e != null && Matrices.filas(e)==Matrices.columnas(e) && !excepcion){RESULT = Matrices.adjunta(e);}else{System.out.println(Matrices.ERROR_ADJUNTA); excepcion = true;} :}
+            | ALL matriz CLL {: double[][] matriz = crearMatriz(); if(matriz.length == 1 ){RESULT = matriz[0];}else{RESULT = matriz;}; matrizA.clear(); :}
+            | AP exp:e CP {: RESULT = e; :}
+            | exp:e1 MAS exp:e2 {: if(Matrices.filas(e1) == Matrices.filas(e2) && Matrices.columnas(e1) == Matrices.columnas(e2)){RESULT= Matrices.suma(e1,e2);}else{System.out.println(Matrices.ERROR_SUMA);}:}
+            | exp:e1 MENOS exp:e2 {:if(Matrices.filas(e1) == Matrices.filas(e2) && Matrices.columnas(e1) == Matrices.columnas(e2)){RESULT= Matrices.suma(e1,Matrices.producto(-1,e2));}else{System.out.println(Matrices.ERROR_SUMA);}:}
+            | exp:e1 POR exp:e2 {: double[][] result = multiplicar(e1,e2); if(result != null){RESULT = result;}else{System.out.println(Matrices.ERROR_PROD);} :}
+            | exp:e1 DIV exp:e2 {:if(Matrices.columnas(e1) == Matrices.filas(e2)){RESULT= Matrices.producto(e1,Matrices.inversa(e2));}else{System.out.println(Matrices.ERROR_PROD);}:}
+            | exp:e1 CONCATENA exp:e2 {: RESULT = Matrices.concatena(e1,e2); :}
+            | MATRIZ:m {: RESULT = m; :}
+            ;
+
+vect       ::= IDENT:id       {: RESULT = TablaSimbolos.buscar(id); :}
+            | PRINT AP vect:e CP {: if(e != null && !excepcion){Matrices.print(e);} :}
+            | TRANSPUESTA AP vect:e CP {: if(e != null && !excepcion){RESULT = Matrices.transpuesta(e);}    :}
+            | INVERSA AP vect:e CP {: if(e != null && Matrices.filas(e)==Matrices.columnas(e) && !excepcion){RESULT = Matrices.inversa(e);}else{System.out.println(Matrices.ERROR_INVERSA); excepcion = true;} :}
+            | ADJUNTA AP vect:e CP {: if(e != null && Matrices.filas(e)==Matrices.columnas(e) && !excepcion){RESULT = Matrices.adjunta(e);}else{System.out.println(Matrices.ERROR_ADJUNTA); excepcion = true;} :}
+            | ALL matriz CLL {: double[][] matriz = crearMatriz(); if(matriz.length == 1 ){RESULT = matriz[0];}else{RESULT = matriz;}; matrizA.clear(); :}
+            | AP vect:e CP {: RESULT = e; :}
+            | exp:e1 MAS vect:e2 {: if(Matrices.filas(e1) == Matrices.filas(e2) && Matrices.columnas(e1) == Matrices.columnas(e2)){RESULT= Matrices.suma(e1,e2);}else{System.out.println(Matrices.ERROR_SUMA);}:}
+            | exp:e1 MENOS vect:e2 {:if(Matrices.filas(e1) == Matrices.filas(e2) && Matrices.columnas(e1) == Matrices.columnas(e2)){RESULT= Matrices.suma(e1,Matrices.producto(-1,e2));}else{System.out.println(Matrices.ERROR_SUMA);}:}
+            | exp:e1 POR vect:e2 {: double[][] result = multiplicar(e1,e2); if(result != null){RESULT = result;}else{System.out.println(Matrices.ERROR_PROD);} :}
+            | exp:e1 DIV vect:e2 {:if(Matrices.columnas(e1) == Matrices.filas(e2)){RESULT= Matrices.producto(e1,Matrices.inversa(e2));}else{System.out.println(Matrices.ERROR_PROD);}:}
+            | exp:e1 CONCATENA vect:e2 {: RESULT = Matrices.concatena(e1,e2); :}
+            | VECTOR:v {: RESULT = v; :}
+            ;
+
+matriz    ::= matriz COMA ALL fila CLL {: matrizA.add((ArrayList<Double>)fila.clone()); fila.clear(); :}
+            | ALL fila CLL {: matrizA.add((ArrayList<Double>)fila.clone()); fila.clear(); :}
+            | fila {: matrizA.add((ArrayList<Double>)fila.clone()); fila.clear(); :}
+            ;
+
+fila      ::= fila COMA NUMERO:n {: fila.add(n);:}
+            | NUMERO:n       {: fila.add(n);:}
+            ;
