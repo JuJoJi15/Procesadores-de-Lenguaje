@@ -601,16 +601,19 @@ public class Matrices {
     /* ********************************************* */
 
     public static boolean DEBUG = false;
-
+    public static Yylex lex;
     public static void main(String argv[]) {
+        
         try {
             parser p = null;
+
             int i = 0;
             while (i < argv.length) {
                 if ("+v".equals(argv[i])) {
                     DEBUG = true;
                 } else {
-                    p = new parser(new Yylex(new FileReader(argv[i])));
+                    lex = new Yylex(new FileReader(argv[i]));
+                    p = new parser(lex);
                 }
                 i++;
             }
