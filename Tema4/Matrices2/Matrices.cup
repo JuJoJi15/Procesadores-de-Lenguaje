@@ -6,6 +6,7 @@ action code {:
 
     
     ArrayList<ArrayList<Double>> matrizA = new ArrayList();
+    ArrayList<ArrayList<Double>> matrizB = new ArrayList();
     ArrayList<Double> fila = new ArrayList();
     boolean excepcion = false;
 
@@ -21,6 +22,18 @@ action code {:
         }
         return matriz;
     }
+
+    public double[] crearVector(){
+        double[] vector = null;
+
+        try{
+            vector = Matrices.toVector(matrizB)[0];
+        }catch(Exception e){
+            System.out.println(Matrices.ERROR_FILAS);
+        }
+        return vector;
+    }
+    
     
     public boolean esMatriz(double[][] e){
         return true;
@@ -105,7 +118,7 @@ exp       ::=  MATRIZ:m {: RESULT = m; :}
 vect       ::=  VECTOR:v {: RESULT = v; :}
             | PRINT AP vect:e CP {: if(e != null && !excepcion){Matrices.print(e);} :}
             | vect:v1 MAS vect:v2 {: if(Matrices.dim(v1)==Matrices.dim(v2)){RESULT = Matrices.suma(v1,v2);}else{System.out.println(Matrices.ERROR_SUMA);} :}
-            | ALL vector CLL {: double[][] matriz = crearMatriz();RESULT = matriz[0]; matrizA.clear(); :}
+            | ALL vector CLL {: double[][] matriz = crearVector();RESULT = matriz[0]; matrizB.clear(); :}
             | AP vect:e CP {: RESULT = e; :}
             | vect:e1 CONCATENA vect:e2 {: RESULT = Matrices.concatena(e1,e2);  :}
             | vect:e1 CONCATENA NUMERO:n {: RESULT = Matrices.concatena(e1,n); :}
@@ -114,10 +127,8 @@ vect       ::=  VECTOR:v {: RESULT = v; :}
 
 vector    ::= fila {: matrizA.add((ArrayList<Double>)fila.clone()); fila.clear(); :};
 
-matriz    ::= matriz COMA ALL fila CLL {: matrizA.add((ArrayList<Double>)fila.clone()); fila.clear(); :}
-            | matriz COMA vect:v2 {: matrizA.add(Matrices.toArrayList(v2)); :}
-            | ALL fila CLL {: matrizA.add((ArrayList<Double>)fila.clone()); fila.clear(); :}
-            | vect:v {:matrizA.add(Matrices.toArrayList(v));:}
+matriz    ::=  matriz COMA vect:v2 {: matrizA.add(Matrices.toArrayList(v2)); :}
+            | vect:v {:matrizA.add(Matrices.toArrayList(v));System.out.println(Matrices.toArrayList(v)):}
             ;
 
 fila      ::= fila COMA NUMERO:n {: fila.add(n);:}

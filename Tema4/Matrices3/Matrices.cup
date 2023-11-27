@@ -1,0 +1,95 @@
+//Matrices3
+
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+
+action code {:
+
+    ArrayList<Double> fila = new ArrayList();
+
+
+:}
+
+parser code {:  
+
+    public void syntax_error(Symbol cur_token){
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token){
+        System.err.println("Syntax error en linea" + Matrices.lex.getLine() + ", columna " + Matrices.lex.getColumn() + " con el token "+ sym.terminalNames[cur_token.sym]);
+        // report_error("Syntax error", null);
+        done_parsing();
+    }
+
+
+:}
+/* Terminales */
+
+terminal MAS,MENOS,POR,DIV,ASIG,CONCATENA,INTERSECCION;
+terminal ALL,CLL,AP,CP,AC,CC;
+terminal COMA,PYC;
+terminal SET,INVERSA,TRANSPUESTA,ADJUNTA,PRINT;
+terminal double[][] MATRIZ;
+terminal double[] VECTOR,CONJUNTO;
+terminal String IDENT;
+terminal Double NUMERO;
+
+// no terminales
+
+non terminal          listaExp;
+non terminal          linea;
+non terminal          fila;
+non terminal double[] exp;
+non terminal double[] vect;
+non terminal double[] conj;
+non terminal double[] aux;
+
+// Procedencia
+
+
+precedence left MAS;
+precedence left CONCATENA;
+precedence left INTERSECCION;
+
+
+// Gramatica
+
+listaExp  ::= listaExp linea      
+            | linea 
+            ;
+
+linea	  ::= IDENT:id ASIG vect:v PYC {: TablaSimbolos.insertarVector(id,v); :} 
+            | IDENT:id ASIG conj:c PYC {: TablaSimbolos.insertarConjunto(id,c); :}          
+            | PRINT AP exp:e CP PYC    {: Matrices.print(e); :}
+            ;
+
+exp       ::= vect:v      {: RESULT = v; :}
+            | conj:c        {: RESULT = c; :}
+            ;
+
+vect    ::= ALL fila CLL      {: RESULT = Matrices.toVector(fila); fila.clear(); :}
+          | VECTOR:v         {: RESULT = v; :}
+          | vect:v1 CONCATENA vect:v2 {: RESULT = Matrices.concatena(v1,v2); :}
+          | vect:v  CONCATENA NUMERO:n {: RESULT = Matrices.concatena(v,n); :}
+          | NUMERO:n CONCATENA vect:v {: RESULT = Matrices.concatena(n,v); :}
+          | vect:v CONCATENA conj:c {: RESULT = Matrices.concatena(v,c); :}
+          | conj:c CONCATENA vect:v {: RESULT = Matrices.concatena(c,v); :}
+          | vect:v1 MAS vect:v2 {: if(Matrices.dim(v1)==Matrices.dim(v2)){RESULT = Matrices.suma(v1,v2);}else{System.out.println(Matrices.ERROR_SUMA);} :}
+          ;
+
+conj ::= SET aux:a      {: RESULT = Matrices.toSet(a); :}
+       | CONJUNTO:c      {: RESULT = c; :}
+       | conj:c1 CONCATENA conj:c2  {: RESULT = Matrices.union(c1,c2); :}
+       | conj:c1 INTERSECCION conj:c2 {: RESULT = Matrices.interseccion(c1,c2); :}
+       ;
+
+aux  ::= conj:c  {: RESULT = c; :}
+       | vect:v     {: RESULT = v; :}
+       ;
+
+fila      ::= fila COMA NUMERO:n {: fila.add(n);:}
+            | fila COMA MENOS NUMERO:n {: fila.add(-1*n);:}
+            | NUMERO:n       {: fila.add(n);:}
+            | MENOS NUMERO:n       {: fila.add(-1*n); :} 
+            ;
