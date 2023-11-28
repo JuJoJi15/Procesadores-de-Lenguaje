@@ -97,12 +97,12 @@ class Yylex implements java_cup.runtime.Scanner {
   private static final String ZZ_ACTION_PACKED_0 =
     "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7"+
     "\1\10\1\1\1\11\2\12\1\13\1\14\1\15\2\16"+
-    "\1\17\1\20\4\16\1\21\1\22\2\0\1\12\1\2"+
-    "\2\0\4\16\1\12\12\16\1\23\4\16\1\24\1\25"+
-    "\4\16\1\26";
+    "\1\17\1\20\4\16\1\21\1\22\1\12\1\2\3\0"+
+    "\4\16\1\12\12\16\1\23\4\16\1\24\1\25\4\16"+
+    "\1\26";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[59];
+    int [] result = new int[58];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -128,16 +128,16 @@ class Yylex implements java_cup.runtime.Scanner {
 
   private static final String ZZ_ROWMAP_PACKED_0 =
     "\0\0\0\43\0\43\0\43\0\43\0\43\0\43\0\43"+
-    "\0\106\0\151\0\214\0\257\0\322\0\43\0\43\0\43"+
-    "\0\365\0\u0118\0\43\0\43\0\u013b\0\u015e\0\u0181\0\u01a4"+
-    "\0\43\0\43\0\151\0\u01c7\0\u01ea\0\u020d\0\257\0\u0230"+
-    "\0\u0253\0\u0276\0\u0299\0\u02bc\0\u0230\0\u02df\0\u0302\0\u0325"+
-    "\0\u0348\0\u036b\0\u038e\0\u03b1\0\u03d4\0\u03f7\0\u041a\0\365"+
-    "\0\u043d\0\u0460\0\u0483\0\u04a6\0\365\0\365\0\u04c9\0\u04ec"+
-    "\0\u050f\0\u0532\0\365";
+    "\0\43\0\106\0\151\0\214\0\257\0\43\0\43\0\43"+
+    "\0\322\0\365\0\43\0\43\0\u0118\0\u013b\0\u015e\0\u0181"+
+    "\0\43\0\43\0\u01a4\0\u01c7\0\214\0\u01ea\0\u020d\0\u0230"+
+    "\0\u0253\0\u0276\0\u0299\0\u020d\0\u02bc\0\u02df\0\u0302\0\u0325"+
+    "\0\u0348\0\u036b\0\u038e\0\u03b1\0\u03d4\0\u03f7\0\322\0\u041a"+
+    "\0\u043d\0\u0460\0\u0483\0\322\0\322\0\u04a6\0\u04c9\0\u04ec"+
+    "\0\u050f\0\322";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[59];
+    int [] result = new int[58];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -163,44 +163,43 @@ class Yylex implements java_cup.runtime.Scanner {
     "\1\2\2\3\1\2\1\4\1\5\1\6\1\7\1\10"+
     "\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20"+
     "\1\21\1\22\1\23\1\24\1\25\1\21\1\22\1\26"+
-    "\2\21\1\27\2\21\1\30\2\21\1\31\1\32\55\0"+
-    "\1\33\1\0\1\14\1\15\4\0\1\34\4\0\1\34"+
-    "\27\0\2\35\40\0\1\36\41\0\1\35\1\0\2\37"+
-    "\4\0\1\34\4\0\1\34\25\0\1\35\1\0\2\15"+
-    "\4\0\1\34\4\0\1\34\27\0\2\21\3\0\2\21"+
-    "\2\0\14\21\11\0\1\40\1\0\1\40\2\0\2\21"+
-    "\3\0\2\21\2\0\14\21\16\0\2\21\3\0\2\21"+
-    "\2\0\1\21\1\41\12\21\16\0\2\21\3\0\2\21"+
-    "\2\0\5\21\1\42\6\21\16\0\2\21\3\0\2\21"+
-    "\2\0\7\21\1\43\4\21\16\0\2\21\3\0\2\21"+
-    "\2\0\7\21\1\44\4\21\11\0\1\40\1\0\1\40"+
-    "\2\0\2\45\41\0\2\35\4\0\1\34\4\0\1\34"+
-    "\13\0\2\36\2\0\37\36\14\0\2\45\41\0\2\21"+
-    "\3\0\2\21\2\0\4\21\1\46\7\21\16\0\2\21"+
-    "\3\0\2\21\2\0\13\21\1\47\16\0\2\21\3\0"+
-    "\2\21\2\0\3\21\1\50\10\21\16\0\2\21\3\0"+
-    "\2\21\2\0\1\51\13\21\16\0\2\21\3\0\2\21"+
-    "\2\0\12\21\1\52\1\21\16\0\2\21\3\0\2\21"+
-    "\2\0\2\21\1\53\11\21\16\0\2\21\3\0\2\21"+
-    "\2\0\5\21\1\54\6\21\16\0\2\21\3\0\2\21"+
-    "\2\0\5\21\1\55\6\21\16\0\2\21\3\0\2\21"+
-    "\2\0\5\21\1\56\6\21\16\0\2\21\3\0\2\21"+
-    "\2\0\7\21\1\57\4\21\16\0\2\21\3\0\2\21"+
-    "\2\0\11\21\1\60\2\21\16\0\2\21\3\0\2\21"+
-    "\2\0\10\21\1\61\3\21\16\0\2\21\3\0\2\21"+
-    "\2\0\11\21\1\62\2\21\16\0\2\21\3\0\2\21"+
-    "\2\0\10\21\1\63\3\21\16\0\2\21\3\0\2\21"+
-    "\2\0\6\21\1\64\5\21\16\0\2\21\3\0\2\21"+
-    "\2\0\1\65\13\21\16\0\2\21\3\0\2\21\2\0"+
-    "\1\66\13\21\16\0\2\21\3\0\2\21\2\0\12\21"+
-    "\1\67\1\21\16\0\2\21\3\0\2\21\2\0\2\21"+
-    "\1\70\11\21\16\0\2\21\3\0\2\21\2\0\10\21"+
-    "\1\71\3\21\16\0\2\21\3\0\2\21\2\0\11\21"+
-    "\1\72\2\21\16\0\2\21\3\0\2\21\2\0\1\73"+
-    "\13\21\2\0";
+    "\2\21\1\27\2\21\1\30\2\21\1\31\1\32\57\0"+
+    "\2\33\40\0\1\34\41\0\1\33\1\0\2\35\4\0"+
+    "\1\36\4\0\1\36\25\0\1\33\1\0\2\15\4\0"+
+    "\1\36\4\0\1\36\27\0\2\21\3\0\2\21\2\0"+
+    "\14\21\11\0\1\37\1\0\1\37\2\0\2\21\3\0"+
+    "\2\21\2\0\14\21\16\0\2\21\3\0\2\21\2\0"+
+    "\1\21\1\40\12\21\16\0\2\21\3\0\2\21\2\0"+
+    "\5\21\1\41\6\21\16\0\2\21\3\0\2\21\2\0"+
+    "\7\21\1\42\4\21\16\0\2\21\3\0\2\21\2\0"+
+    "\7\21\1\43\4\21\16\0\2\33\4\0\1\36\4\0"+
+    "\1\36\13\0\2\34\2\0\37\34\7\0\1\37\1\0"+
+    "\1\37\2\0\2\44\41\0\2\44\41\0\2\21\3\0"+
+    "\2\21\2\0\4\21\1\45\7\21\16\0\2\21\3\0"+
+    "\2\21\2\0\13\21\1\46\16\0\2\21\3\0\2\21"+
+    "\2\0\3\21\1\47\10\21\16\0\2\21\3\0\2\21"+
+    "\2\0\1\50\13\21\16\0\2\21\3\0\2\21\2\0"+
+    "\12\21\1\51\1\21\16\0\2\21\3\0\2\21\2\0"+
+    "\2\21\1\52\11\21\16\0\2\21\3\0\2\21\2\0"+
+    "\5\21\1\53\6\21\16\0\2\21\3\0\2\21\2\0"+
+    "\5\21\1\54\6\21\16\0\2\21\3\0\2\21\2\0"+
+    "\5\21\1\55\6\21\16\0\2\21\3\0\2\21\2\0"+
+    "\7\21\1\56\4\21\16\0\2\21\3\0\2\21\2\0"+
+    "\11\21\1\57\2\21\16\0\2\21\3\0\2\21\2\0"+
+    "\10\21\1\60\3\21\16\0\2\21\3\0\2\21\2\0"+
+    "\11\21\1\61\2\21\16\0\2\21\3\0\2\21\2\0"+
+    "\10\21\1\62\3\21\16\0\2\21\3\0\2\21\2\0"+
+    "\6\21\1\63\5\21\16\0\2\21\3\0\2\21\2\0"+
+    "\1\64\13\21\16\0\2\21\3\0\2\21\2\0\1\65"+
+    "\13\21\16\0\2\21\3\0\2\21\2\0\12\21\1\66"+
+    "\1\21\16\0\2\21\3\0\2\21\2\0\2\21\1\67"+
+    "\11\21\16\0\2\21\3\0\2\21\2\0\10\21\1\70"+
+    "\3\21\16\0\2\21\3\0\2\21\2\0\11\21\1\71"+
+    "\2\21\16\0\2\21\3\0\2\21\2\0\1\72\13\21"+
+    "\2\0";
 
   private static int [] zzUnpacktrans() {
-    int [] result = new int[1365];
+    int [] result = new int[1330];
     int offset = 0;
     offset = zzUnpacktrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -243,11 +242,11 @@ class Yylex implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\7\11\5\1\3\11\2\1\2\11\4\1\2\11"+
-    "\2\0\2\1\2\0\33\1";
+    "\1\0\10\11\4\1\3\11\2\1\2\11\4\1\2\11"+
+    "\2\1\3\0\33\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[59];
+    int [] result = new int[58];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -307,11 +306,9 @@ class Yylex implements java_cup.runtime.Scanner {
   private int zzFinalHighSurrogate = 0;
 
   /** Number of newlines encountered up to the start of the matched text. */
-  @SuppressWarnings("unused")
   private int yyline;
 
   /** Number of characters from the last newline up to the start of the matched text. */
-  @SuppressWarnings("unused")
   private int yycolumn;
 
   /** Number of characters up to the start of the matched text. */
@@ -634,6 +631,63 @@ class Yylex implements java_cup.runtime.Scanner {
     while (true) {
       zzMarkedPosL = zzMarkedPos;
 
+      boolean zzR = false;
+      int zzCh;
+      int zzCharCount;
+      for (zzCurrentPosL = zzStartRead  ;
+           zzCurrentPosL < zzMarkedPosL ;
+           zzCurrentPosL += zzCharCount ) {
+        zzCh = Character.codePointAt(zzBufferL, zzCurrentPosL, zzMarkedPosL);
+        zzCharCount = Character.charCount(zzCh);
+        switch (zzCh) {
+        case '\u000B':  // fall through
+        case '\u000C':  // fall through
+        case '\u0085':  // fall through
+        case '\u2028':  // fall through
+        case '\u2029':
+          yyline++;
+          yycolumn = 0;
+          zzR = false;
+          break;
+        case '\r':
+          yyline++;
+          yycolumn = 0;
+          zzR = true;
+          break;
+        case '\n':
+          if (zzR)
+            zzR = false;
+          else {
+            yyline++;
+            yycolumn = 0;
+          }
+          break;
+        default:
+          zzR = false;
+          yycolumn += zzCharCount;
+        }
+      }
+
+      if (zzR) {
+        // peek one character ahead if it is
+        // (if we have counted one line too much)
+        boolean zzPeek;
+        if (zzMarkedPosL < zzEndReadL)
+          zzPeek = zzBufferL[zzMarkedPosL] == '\n';
+        else if (zzAtEOF)
+          zzPeek = false;
+        else {
+          boolean eof = zzRefill();
+          zzEndReadL = zzEndRead;
+          zzMarkedPosL = zzMarkedPos;
+          zzBufferL = zzBuffer;
+          if (eof)
+            zzPeek = false;
+          else
+            zzPeek = zzBufferL[zzMarkedPosL] == '\n';
+        }
+        if (zzPeek) yyline--;
+      }
       zzAction = -1;
 
       zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;

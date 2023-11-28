@@ -602,11 +602,10 @@ public class Matrices {
 
     public static boolean DEBUG = false;
     public static Yylex lex;
+
     public static void main(String argv[]) {
-        
         try {
             parser p = null;
-
             int i = 0;
             while (i < argv.length) {
                 if ("+v".equals(argv[i])) {
