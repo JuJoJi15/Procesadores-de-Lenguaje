@@ -30,7 +30,7 @@ terminal int        NUMERO;
 non terminal listaExp;
 non terminal lista;
 non terminal exp;
-non terminal List<int> listaVa; //Opcion 2 : String
+non terminal List<int> listaVa; //Opcion 2 : String her poli vinc dinamica
 
 /* Precedencia */
 precedence left MAS,MENOS;

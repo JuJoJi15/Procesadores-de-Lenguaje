@@ -1,0 +1,144 @@
+import java_cup.runtime.*;
+
+action code{:
+
+public abstract class ArbolS{}
+
+public abstract class listaExp extends ArbolS{
+    public abstract void ejecutar();
+}
+
+public class listaDoble extends listaExp{
+    private listaExp lista;
+    private Linea linea;
+    public listaDoble(listaExp li, linea ln){
+        lista = li;
+        linea = ln;
+    }
+    public void ejecutar(){
+        lista.ejecutar();
+        linea.ejecutar();
+    }
+    
+}
+public class listaLinea extends listaExp{
+    private Linea linea;
+    public listaLinea(linea ln){
+        linea = ln;
+    }
+    public void ejecutar(){
+        linea.ejecutar();
+    }
+}
+
+public abstract classLine extends ArbolS{
+    public abstract void ejecutar();
+}
+
+public class lineaExp extends Linea{
+    private Exp exp;
+    public LineaExp(Exp e){
+        exp = e;
+    }
+    public void ejecutar(){
+        int v;
+        v = ex.evaluar();
+        Calculadora.out.println(v);
+    }
+}
+
+public class lineaVacia extend Linea{
+    public void ejecutar(){}
+}
+
+public abstract class Exp extends ArbolS{
+    public abstract int evaluar();
+}
+
+public class ExpN extends Exp{
+    private int valor;
+    public ExpN(int v){
+        valor = v;
+    }
+    public int evaluar(){
+        return valor;
+    }
+}
+
+public class ExpMU extends Exp{
+    private Exp exp;
+    public ExpMU (Exp e){
+        exp = e;
+    }
+    public int evaluar(){
+        return -exp.evaluar();
+    }
+}
+
+public class ExpBinaria extends Exp{
+    private Exp exp1, exp2;
+    private char op;
+    public ExpBinaria(Exp e1, char o, Exp e2){
+        exp1 = e1;
+        exp2 = e2;
+        op = o;
+    }
+    public int evaluar(){
+        int r;
+        switch(op){
+            case '+':
+                r = exp1.evaluar()+exp2.evaluar();
+                break;
+            case '-':
+                r = exp1.evaluar()-exp2.evaluar();
+                break;
+            case '*+':
+                r = exp1.evaluar()*exp2.evaluar();
+                break;
+            case '/':
+                r = exp1.evaluar()/exp2.evaluar();
+                break;
+            default:
+                Calculadora.err.println("ERROR");
+                break;
+        }
+        return r;
+    }
+}
+
+:}
+
+
+/* Terminales */
+terminal            MAS, MENOS, POR, DIV, MENOSUNARIO;
+terminal            AP, CP;
+terminal            PYC;
+terminal Integer    NUMERO;
+
+/* No terminales */
+non terminal listaExp     listaExp;
+non terminal linea        linea;
+non terminal Exp     exp;
+
+/* Precedencia */
+precedence left MAS, MENOS;
+precedence left POR, DIV;
+precedence left MENOSUNARIO;
+
+/* Gramatica */
+listaExp      ::= listaExp:li linea:ln {: RESULT = new listaDoble(li,ln); :}
+            | linea     :ln            {: RESULT = new listaLinea(ln); :}
+            ;
+linea	  ::= exp:e PYC            {: RESULT = new LineaExp(e); :}
+            | PYC                  {: RESULT = new lineaVacia(); :}
+            ;
+exp       ::= exp:e1 MAS exp:e2     {: RESULT = new ExpBinaria(e1,'+',e2); :}
+            | exp:e1 MENOS exp:e2   {: RESULT = new ExpBinaria(e1,'-',e2); :}
+            | exp:e1 POR exp:e2     {: RESULT = new ExpBinaria(e1,'*',e2); :}
+            | exp:e1 DIV exp:e2     {: RESULT = new ExpBinaria(e1,'/',e2); :}
+	        | MENOS exp:e1          {: RESULT = new ExpMU(e1); :}  %prec MENOSUNARIO 
+            | AP exp:e1 CP          {: RESULT = e1; :}
+	        | NUMERO:n              {: RESULT = new ExpN(n); :}
+	        ;
+
+

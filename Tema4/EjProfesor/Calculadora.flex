@@ -7,7 +7,7 @@ import java_cup.runtime.*;
 %line
 %column
 
-*{
+%{
 
     public int getLine(){
         return yyline;
@@ -15,7 +15,7 @@ import java_cup.runtime.*;
     public int getColumn(){
         return yycolumn;
     }
-}*
+%}
 %%   
 
 /* Expresiones y reglas */
