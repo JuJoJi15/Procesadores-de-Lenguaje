@@ -1,0 +1,57 @@
+//Traductor
+
+import java_cup.runtime.*;
+
+action code {:
+
+    boolean lista = false;
+
+    String nLista = "a";
+
+
+:}
+
+parser code {:  
+
+    public void syntax_error(Symbol cur_token){
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token){
+        System.err.println("Syntax error en linea" + XML2JSON.lex.getLine() + ", columna " + XML2JSON.lex.getColumn() + " con el token "+ sym.terminalNames[cur_token.sym]);
+        // report_error("Syntax error", null);
+        done_parsing();
+    }
+
+
+:}
+/* Terminales */
+
+terminal String OPEN_TAG,CLOSE_TAG,TEXT;
+
+/* No Terminales */
+
+non terminal          fichero;
+non terminal          tag;
+non terminal          linea;
+non terminal          lista;
+
+// Precedencia
+
+
+
+// Gramatica
+
+fichero ::= {: System.out.print("{"); :} tag {: System.out.print("}"); :}
+           ;
+
+tag  ::=     tag  {: System.out.print(","); :} linea  
+           | linea
+           ;
+
+linea	  ::= OPEN_TAG:o {: if(!lista){System.out.print(o+":");} :} TEXT:t {: System.out.print(t); :} CLOSE_TAG
+            | OPEN_TAG:o {: if(o.charAt(o.length()-1) == 's' ){nLista = o;lista = true;System.out.print(o.substring(0,o.length()-1)+": [");} if(!lista || o != nLista.substring(0,nLista.length()-1) && o != nLista){System.out.print(o+": {");} :} tag
+            {: if(lista == true){System.out.print("]");}else{ System.out.print("}");} :} CLOSE_TAG:c {: if(c == nLista){;lista = false;} :}
+            | OPEN_TAG:o CLOSE_TAG {: if(lista){System.out.print(o.substring(0,o.length()-1)+": []");}else{System.out.print("");} :}
+            ;
+
+

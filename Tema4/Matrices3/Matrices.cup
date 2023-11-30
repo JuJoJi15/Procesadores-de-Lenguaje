@@ -70,18 +70,25 @@ exp       ::= vect:v      {: RESULT = v; :}
 
 vect    ::= ALL fila CLL      {: RESULT = Matrices.toVector(fila); fila.clear(); :}
           | VECTOR:v         {: RESULT = v; :}
+          | vect:a1 INTERSECCION conj:a2 {: RESULT = Matrices.interseccion(Matrices.toSet(a1),Matrices.toSet(a2)); :}
+          | conj:a1 INTERSECCION vect:a2 {: RESULT = Matrices.interseccion(Matrices.toSet(a1),Matrices.toSet(a2)); :}
+          | vect:a1 INTERSECCION vect:a2 {: RESULT = Matrices.interseccion(Matrices.toSet(a1),Matrices.toSet(a2)); :}
           | vect:v1 CONCATENA vect:v2 {: RESULT = Matrices.concatena(v1,v2); :}
           | vect:v  CONCATENA NUMERO:n {: RESULT = Matrices.concatena(v,n); :}
           | NUMERO:n CONCATENA vect:v {: RESULT = Matrices.concatena(n,v); :}
           | vect:v CONCATENA conj:c {: RESULT = Matrices.concatena(v,c); :}
           | conj:c CONCATENA vect:v {: RESULT = Matrices.concatena(c,v); :}
           | vect:v1 MAS vect:v2 {: if(Matrices.dim(v1)==Matrices.dim(v2)){RESULT = Matrices.suma(v1,v2);}else{System.out.println(Matrices.ERROR_SUMA);} :}
+          | AP vect:v CP {: RESULT = v; :}
           ;
 
 conj ::= SET aux:a      {: RESULT = Matrices.toSet(a); :}
        | CONJUNTO:c      {: RESULT = c; :}
+       | conj:a1 INTERSECCION conj:a2 {: RESULT = Matrices.interseccion(Matrices.toSet(a1),Matrices.toSet(a2)); :}
        | conj:c1 CONCATENA conj:c2  {: RESULT = Matrices.union(c1,c2); :}
-       | conj:c1 INTERSECCION conj:c2 {: RESULT = Matrices.interseccion(c1,c2); :}
+       | conj:c CONCATENA NUMERO:n  {: RESULT = Matrices.union(c,n); :}
+       | NUMERO:n CONCATENA conj:c  {: RESULT = Matrices.union(n,c); :}
+       | AP conj:c CP {: RESULT = c; :}
        ;
 
 aux  ::= conj:c  {: RESULT = c; :}

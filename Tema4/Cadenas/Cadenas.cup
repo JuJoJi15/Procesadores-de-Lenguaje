@@ -1,0 +1,71 @@
+// Matrices 2
+
+import java_cup.runtime.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+
+
+action code {:
+
+private  HashMap<String,String> tablaCadenas = new HashMap<String,String>();
+	
+public  String buscar(String ident) {
+		return tablaCadenas.get(ident);
+	}
+	
+public  void insertar(String ident, String cadena) {
+			tablaCadenas.put(ident, cadena);
+    }
+
+
+
+:}
+/* Terminales */
+
+terminal MAS,MENOS,IGUAL;
+terminal AP,CP;
+terminal PYC,PUNTO,COMA;
+terminal PRINT, SUBSTR,SIZE;
+terminal String CADENA, ID;
+terminal Integer NUMERO;
+
+/* No Terminales */
+
+non terminal listaExp;
+non terminal linea;
+non terminal funcion;
+non terminal Integer numero;
+non terminal String argumento;
+
+/* Precedencia */
+
+precedence left  MAS,MENOS;
+precedence left  PUNTO,COMA,IGUAL;
+precedence left  AP,CP;
+
+/* Gramatica */
+
+listaExp  ::= listaExp linea      
+            | linea 
+            ;
+
+linea     ::= funcion PYC
+            | ID:id IGUAL argumento:a PYC {: insertar(id,a); :}
+            ;
+
+funcion   ::= PRINT AP argumento:a CP {: Cadenas.out.println(a); :} 
+            ;
+
+argumento ::= CADENA:s {: RESULT = s; :}
+            | ID:id {: RESULT = buscar(id); :}
+            | argumento:a1 MAS argumento:a2 {: RESULT = a1+a2; :}
+            | argumento:a PUNTO SUBSTR AP numero:n1 COMA numero:n2 CP {: int l = n1+n2; RESULT = a.substring(n1,l); :}
+            | AP argumento:a CP {: RESULT = a; :}
+            ;
+
+numero ::= NUMERO:n {: RESULT = n; :}
+         | argumento:a PUNTO SIZE AP CP {: RESULT = a.length(); :}
+         | numero:n1 MAS numero:n2 {: RESULT = n1+n2; :}
+         | numero:n1 MENOS numero:n2 {: RESULT = n1-n2; :}
+         ;

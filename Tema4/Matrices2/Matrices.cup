@@ -1,16 +1,13 @@
-// Matrices
+// Matrices 2
+
 import java_cup.runtime.*;
 import java.util.ArrayList;
 
 action code {:
 
-    
     ArrayList<ArrayList<Double>> matrizA = new ArrayList();
-    ArrayList<ArrayList<Double>> matrizB = new ArrayList();
     ArrayList<Double> fila = new ArrayList();
     boolean excepcion = false;
-
-    double[][] matriz;
 
     public double[][] crearMatriz(){
         double[][] matriz = null;
@@ -27,110 +24,101 @@ action code {:
         double[] vector = null;
 
         try{
-            vector = Matrices.toVector(matrizB)[0];
+            vector = Matrices.toVector(fila);
         }catch(Exception e){
             System.out.println(Matrices.ERROR_FILAS);
         }
         return vector;
     }
-    
-    
-    public boolean esMatriz(double[][] e){
-        return true;
-    }
 
-    public boolean esMatriz(double[] e){
-        return false;
-    }
-
-    public double[][] multiplicar(double[][] e1, double[][] e2){
-        if(Matrices.columnas(e1) == Matrices.filas(e2)){return Matrices.producto(e1,e2);}else{return null;}
-    }
-
-    public double[][] multiplicar(double[] e1, double[][] e2){
-        if(Matrices.dim(e1) == Matrices.filas(e2)){return Matrices.producto(e1,e2);}else{ return null;}
-    }
-
-    public double[][] multiplicar(double[][] e1, double[] e2){
-        if(Matrices.columnas(e1) == Matrices.dim(e2)){return Matrices.producto(e1,e2);}else{return null;}
-    }
-    
-    
 :}
 
-/* Terminales */
-terminal            MAS, MENOS, POR, DIV, ASIG, CONCATENA;
-terminal            AP, CP, ALL, CLL, AC, CC;
-terminal            COMA, PYC;
-terminal double[][] MATRIZ;
-terminal double[]   VECTOR;
-terminal            INVERSA, TRANSPUESTA, ADJUNTA, PRINT;
-terminal double    NUMERO; 
-terminal String IDENT;
+parser code {:  
 
-/* No terminales */
-non terminal         listaExp;
-non terminal         linea;
-non terminal         matriz;
-non terminal         vector;
-non terminal         fila;
-non terminal double[][]  exp;
-non terminal double[] vect;
+    public void syntax_error(Symbol cur_token){
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token){
+        System.err.println("Syntax error en linea" + Matrices.lex.getLine() + ", columna " + Matrices.lex.getColumn() + " con el token "+ sym.terminalNames[cur_token.sym]);
+        // report_error("Syntax error", null);
+        done_parsing();
+    }
+
+
+:}
+/* Terminales */
+
+terminal MAS,MENOS,POR,DIV,ASIG,CONCATENA;
+terminal ALL,CLL,AP,CP,AC,CC;
+terminal COMA,PYC;
+terminal INVERSA,TRANSPUESTA,ADJUNTA,PRINT;
+terminal double[][] MATRIZ;
+terminal double[] VECTOR;
+terminal String IDENT;
+terminal Double NUMERO;
+
+/* No Terminales */
+
+non terminal listaExp;
+non terminal linea;
+non terminal double[][] matriz;
+non terminal double[] vector;
+non terminal columna;
+non terminal fila;
+non terminal funcion;
+
 /* Precedencia */
-precedence left PYC;
-precedence left PRINT;
-precedence left IDENT;
-precedence left INVERSA, TRANSPUESTA, ADJUNTA;
-precedence left ASIG;
-precedence left COMA;
-precedence left MAS, MENOS;
-precedence left POR, DIV;
+
+precedence left MAS;
+precedence left POR;
 precedence left AP,CP;
-precedence left AC, CC;
-precedence left ALL,CLL;
 precedence left CONCATENA;
 
 /* Gramatica */
+
 listaExp  ::= listaExp linea      
             | linea 
             ;
-linea	  ::= exp PYC            
-            | IDENT:id ASIG exp:e {: TablaSimbolos.insertar(id,e);:} PYC      
-            | IDENT:id ASIG vect:v {: TablaSimbolos.insertarVector(id,v); :}  PYC    
-            | vect PYC     
-            ;
-exp       ::=  MATRIZ:m {: RESULT = m; :}   
-            | PRINT AP exp:e CP {: if(e != null && !excepcion){Matrices.print(e);} :}
-            | TRANSPUESTA AP exp:e CP {: if(e != null && !excepcion){RESULT = Matrices.transpuesta(e);}    :}
-            | INVERSA AP exp:e CP {: if(e != null && Matrices.filas(e)==Matrices.columnas(e) && !excepcion){RESULT = Matrices.inversa(e);}else{System.out.println(Matrices.ERROR_INVERSA); excepcion = true;} :}
-            | ADJUNTA AP exp:e CP {: if(e != null && Matrices.filas(e)==Matrices.columnas(e) && !excepcion){RESULT = Matrices.adjunta(e);}else{System.out.println(Matrices.ERROR_ADJUNTA); excepcion = true;} :}
-            | ALL matriz CLL {: double[][] matriz = crearMatriz();System.out.println("AWRIAOEFJ"); RESULT = matriz; matrizA.clear(); :}
-            | AP exp:e CP {: RESULT = e; :}
-            | exp:e1 MAS exp:e2 {: if(Matrices.filas(e1) == Matrices.filas(e2) && Matrices.columnas(e1) == Matrices.columnas(e2)){RESULT= Matrices.suma(e1,e2);}else{System.out.println(Matrices.ERROR_SUMA);}:}
-            | exp:e1 MENOS exp:e2 {:if(Matrices.filas(e1) == Matrices.filas(e2) && Matrices.columnas(e1) == Matrices.columnas(e2)){RESULT= Matrices.suma(e1,Matrices.producto(-1,e2));}else{System.out.println(Matrices.ERROR_SUMA);}:}
-            | exp:e1 POR exp:e2 {: double[][] result = multiplicar(e1,e2); if(result != null){RESULT = result;}else{System.out.println(Matrices.ERROR_PROD);} :}
-            | vect:e1 POR exp:e2 {: double[][] result = multiplicar(e1,e2); if(result != null){RESULT = result;}else{System.out.println(Matrices.ERROR_PROD);} :}
-            | exp:e1 POR vect:e2 {: double[][] result = multiplicar(e1,e2); if(result != null){RESULT = result;}else{System.out.println(Matrices.ERROR_PROD);} :}
-            | exp:e1 DIV exp:e2 {:if(Matrices.columnas(e1) == Matrices.filas(e2)){RESULT= Matrices.producto(e1,Matrices.inversa(e2));}else{System.out.println(Matrices.ERROR_PROD);}:}
-            | exp:e1 CONCATENA vect:e2 {: RESULT = Matrices.concatena(e1,e2); :}
+
+linea     ::= IDENT:id ASIG matriz:m PYC  {: TablaSimbolos.insertar(id,m); :}
+            | IDENT:id AP NUMERO:n1 COMA NUMERO:n2 CP ASIG matriz:m PYC {: TablaSimbolos.insertar(id,Matrices.completar(m,n1.intValue(),n2.intValue())); :}
+            | IDENT:id ASIG vector:v PYC  {: TablaSimbolos.insertarVector(id,v); :}
+            | funcion
             ;
 
-vect       ::=  VECTOR:v {: RESULT = v; :}
-            | PRINT AP vect:e CP {: if(e != null && !excepcion){Matrices.print(e);} :}
-            | vect:v1 MAS vect:v2 {: if(Matrices.dim(v1)==Matrices.dim(v2)){RESULT = Matrices.suma(v1,v2);}else{System.out.println(Matrices.ERROR_SUMA);} :}
-            | ALL vector CLL {: double[][] matriz = crearVector();RESULT = matriz[0]; matrizB.clear(); :}
-            | AP vect:e CP {: RESULT = e; :}
-            | vect:e1 CONCATENA vect:e2 {: RESULT = Matrices.concatena(e1,e2);  :}
-            | vect:e1 CONCATENA NUMERO:n {: RESULT = Matrices.concatena(e1,n); :}
-            | NUMERO:n CONCATENA vect:v1 {: RESULT = Matrices.concatena(n,v1); :}
+funcion   ::= PRINT AP matriz:m CP PYC {: Matrices.print(m); :}
+            | PRINT AP vector:v CP PYC {: Matrices.print(v); :}
             ;
 
-vector    ::= fila {: matrizA.add((ArrayList<Double>)fila.clone()); fila.clear(); :};
+matriz    ::= ALL columna CLL {: RESULT = crearMatriz(); matrizA.clear(); :}
+            | MATRIZ:m {: RESULT = m; :}
+            | matriz:m CONCATENA vector:v {: RESULT = Matrices.concatena(m,v); :}
+            | NUMERO:n MAS matriz:m {: RESULT = Matrices.suma(n,m); :}
+            | matriz:m1 MAS matriz:m2 {: RESULT = Matrices.suma(m1,m2); :}
+            | vector:v1 POR vector:v2 {: RESULT = Matrices.producto(v1,v2); :}
+            | vector:v POR matriz:m {: RESULT = Matrices.producto(v,m); :}
+            | matriz:m POR vector:v {: RESULT = Matrices.producto(m,v); :}
+            | matriz:m1 POR MATRIZ:m AP NUMERO:n1 COMA NUMERO:n2 CP {: if(n1>Matrices.filas(m)){System.err.println(Matrices.ERROR_FILAS_INSUF);}else if(n2>Matrices.columnas(m)){System.err.println(Matrices.ERROR_COLUM_INSUF);} 
+              else{RESULT = Matrices.producto(m1,Matrices.subMatriz(m,n1.intValue(),n2.intValue()));} :}
+            | MATRIZ:m AP NUMERO:n1 COMA NUMERO:n2 CP {: if(n1>Matrices.filas(m)){System.err.println(Matrices.ERROR_FILAS_INSUF);}else if(n2>Matrices.columnas(m)){System.err.println(Matrices.ERROR_COLUM_INSUF);} 
+              else{RESULT = Matrices.subMatriz(m,n1.intValue(),n2.intValue());} :}
+            ;
 
-matriz    ::=  matriz COMA vect:v2 {: matrizA.add(Matrices.toArrayList(v2)); :}
-            | vect:v {:matrizA.add(Matrices.toArrayList(v));System.out.println(Matrices.toArrayList(v)):}
+vector    ::= ALL fila CLL {: RESULT = crearVector(); fila.clear(); :}
+            | VECTOR:v {: RESULT = v; :}
+            | vector:v1 CONCATENA vector:v2 {: RESULT = Matrices.concatena(v1,v2); :}
+            | NUMERO:n CONCATENA vector:v {: RESULT = Matrices.concatena(n,v); :}
+            | vector:v CONCATENA NUMERO:n {: RESULT = Matrices.concatena(v,n); :}
+            | NUMERO:n MAS vector:v {: RESULT = Matrices.suma(n,v); :}
+            | vector:v1 MAS vector:v2 {: RESULT = Matrices.suma(v1,v2); :}
+            ;
+
+columna    ::= columna COMA vector:v {: matrizA.add((ArrayList<Double>)Matrices.toArrayList(v)); fila.clear(); :}
+            | vector:v {: matrizA.add((ArrayList<Double>)Matrices.toArrayList(v)); fila.clear(); :}
             ;
 
 fila      ::= fila COMA NUMERO:n {: fila.add(n);:}
+            | fila COMA MENOS NUMERO:n {: fila.add(-n);:}
             | NUMERO:n       {: fila.add(n);:}
+            | MENOS NUMERO:n {: fila.add(-n);:}
             ;

@@ -42,7 +42,7 @@ non terminal double[][] exp;
 precedence left PRINT;
 precedence left IDENT;
 precedence left INVERSA, TRANSPUESTA, ADJUNTA;
-precedence left COMA;
+
 precedence left MAS, MENOS;
 precedence left POR, DIV;
 precedence left AP,CP;
