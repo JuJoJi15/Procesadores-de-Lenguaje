@@ -1,0 +1,117 @@
+import java.io.IOException;
+import java_cup.runtime.*;
+parser code {:
+
+ public void syntax_error(Symbol cur_token){
+	}
+
+ public void unrecovered_syntax_error(Symbol cur_token){
+        System.err.println("Syntax error en linea" + PLC.lex.getLine() + ", columna " + PLC.lex.getColumna() + " con el token "+ sym.terminalNames[cur_token.sym]);
+        // report_error("Syntax error", null);
+        done_parsing();
+    }
+
+:}
+
+
+action code{:
+
+
+    private int nEtiq = 0;
+    private int nVar = 0;
+    class ParEt{public String sv,sf;
+
+      public ParEt(String v,String f){
+        sv = v;
+        sf = f;
+      }
+
+    }
+    class BucEt{public String ini,sv,sf;}
+    class ElsEt{public String fin,sv,sf;}
+    class ForEt{public String ini,sv,sf,ct;}
+
+    private String newEtiq(){
+        String res = "L"+nEtiq;
+        nEtiq++;
+        return res;
+    }
+    private String newVar(){
+        String res = "t"+nVar;
+        nVar++;
+        return res;
+    }
+:}
+
+
+/* Terminales */
+terminal            MAS, MENOS, MULT, DIVID, MENOSUNARIO, IGUAL, ASIGNA, EXC, DIF;
+terminal            AP, CP, ALL, CLL;
+terminal            PYC;
+terminal            MAYOR,MENOR,MAYIG,MENIG;
+terminal            AND, OR;
+terminal            IF, ELSE, WHILE, DO, FOR, PRINT;
+terminal String     IDENT;
+terminal String     ENTERO;
+
+/* No terminales */
+
+    non terminal Lista_de_sent;
+    non terminal Sentencia;
+    non terminal String Expresion;
+    non terminal ParEt Condicion;
+    non terminal ParEt etiq_salto;
+    non terminal ElsEt etiq_else;
+    non terminal BucEt etiq_bucle;
+    non terminal ForEt etiq_for;
+    non terminal String var;
+
+/* Precedencia */
+precedence left MAS,MENOS;
+precedence left MULT,DIVID;
+precedence left MENOSUNARIO;
+precedence left AND, OR;
+precedence left AP, CP;
+precedence left ALL,CLL;
+
+/* Gramatica */
+
+Lista_de_sent ::= Sentencia
+                | Lista_de_sent Sentencia
+                ;
+Sentencia ::= Expresion PYC // Las etiquetas se podrain simplificar
+            | IF etiq_salto:e AP Condicion:c CP {: PLC.out.println(c.sv+":"); :} Sentencia ELSE {: PLC.out.println("goto "+e.sv+";");PLC.out.println(c.sf+":"); :} Sentencia {: PLC.out.println(e.sv+":"); :} 
+            | IF AP Condicion:c CP {: PLC.out.println(c.sv+":"); :} Sentencia {: PLC.out.println(c.sf+":"); :} 
+            | WHILE etiq_bucle:e {: PLC.out.println(e.ini+":"); :} AP Condicion:c CP {: PLC.out.println(c.sv+":"); :} Sentencia {: PLC.out.println("goto "+e.ini+";");PLC.out.println(c.sf+":"); :}
+            | DO etiq_bucle:e {: PLC.out.println(e.ini+":"); :} Sentencia WHILE AP Condicion:c CP {: PLC.out.println(c.sv+":");PLC.out.println("goto "+e.ini+";"); :} PYC  {: PLC.out.println(c.sf+":"); :}
+            | FOR etiq_for:e AP Expresion:e1 PYC {: PLC.out.println(e.ini+":"); :} Condicion:c PYC {: PLC.out.println(e.ct+":"); :} Expresion:e2 {: PLC.out.println("goto "+e.ini+" ;"); :} CP {: PLC.out.println(e.sv+":"); :} Sentencia  {: PLC.out.println("goto "+e.ct+";");PLC.out.println(c.sf+":"); :}
+            | PRINT  AP Expresion:e CP PYC {: PLC.out.println("print "+e+" ;"); :}
+            | ALL Lista_de_sent CLL
+            ;
+Expresion ::= Expresion:e1 MAS Expresion:e2 {: String v = newVar(); PLC.out.println(v+" = "+e1+" + "+e2+";");RESULT = v; :}
+            | Expresion:e1 MENOS  Expresion:e2 {: String v = newVar(); PLC.out.println(v+" = "+e1+" - "+e2+";");RESULT = v; :}
+            | Expresion:e1 MULT  Expresion:e2 {: String v = newVar(); PLC.out.println(v+" = "+e1+" * "+e2+";");RESULT = v; :}
+            | Expresion:e1 DIVID  Expresion:e2 {: String v = newVar(); PLC.out.println(v+" = "+e1+" / "+e2+";");RESULT = v; :}
+            | MENOS  Expresion:e   {: String v = newVar(); PLC.out.println(v+" = 0 - "+e+";");RESULT = v; :} %prec MENOSUNARIO
+            | AP Expresion:e CP {: RESULT = e; :}
+            | IDENT:i  ASIGNA  Expresion:e {: PLC.out.println(i+" = "+e+";");RESULT = i; :}
+            | IDENT:i {: RESULT = i; :}
+            | ENTERO:e {: RESULT = e; :}
+            ;
+Condicion ::= Expresion:e1 IGUAL Expresion:e2 etiq_salto:e {: PLC.out.println("if("+e1+"=="+e2+") goto "+e.sv+";");PLC.out.println("goto "+e.sf);RESULT = e; :}
+            | Expresion:e1 DIF Expresion:e2 etiq_salto:e  {: PLC.out.println("if("+e1+"=="+e2+") goto "+e.sf+";");PLC.out.println("goto "+e.sv);RESULT = e; :}
+            | Expresion:e1 MENOR Expresion:e2 etiq_salto:e  {: PLC.out.println("if("+e1+"<"+e2+") goto "+e.sv+";");PLC.out.println("goto "+e.sf);RESULT = e; :}
+            | Expresion:e1 MENIG Expresion:e2 etiq_salto:e {: PLC.out.println("if("+e1+"=="+e2+") goto "+e.sv+";");PLC.out.println("if("+e1+"<"+e2+") goto "+e.sv+";");PLC.out.println("goto "+e.sf);RESULT = e; :}
+            | Expresion:e1 MAYOR Expresion:e2 etiq_salto:e  {: PLC.out.println("if("+e1+">"+e2+") goto "+e.sf+";");PLC.out.println("goto "+e.sv);RESULT = e; :}
+            | Expresion:e1 MAYIG Expresion:e2 etiq_salto:e {: PLC.out.println("if("+e1+"=="+e2+") goto "+e.sf+";");PLC.out.println("if("+e1+"<"+e2+") goto "+e.sf+";");PLC.out.println("goto "+e.sv);RESULT = e; :}
+            | EXC Condicion:c {: ParEt p = new ParEt(c.sf,c.sv);RESULT = p; :}
+            | Condicion:c1 AND {: PLC.out.println(c1.sv+":"); :}  Condicion:c2 {: ParEt p = new ParEt(newEtiq(),newEtiq());PLC.out.println(c2.sv+":"); PLC.out.println("goto "+p.sv+";");PLC.out.println(c1.sf+":");PLC.out.println(c2.sf+":");PLC.out.println("goto "+p.sf+";");RESULT = p; :}
+            | Condicion:c1 OR {: PLC.out.println(c1.sf+":"); :}  Condicion:c2 {: ParEt p = new ParEt(newEtiq(),newEtiq());PLC.out.println(c2.sf+":"); PLC.out.println("goto "+p.sf+";");PLC.out.println(c1.sv+":");PLC.out.println(c2.sv+":");PLC.out.println("goto "+p.sv+";");RESULT = p; :}
+            | AP Condicion:c CP {: RESULT = c; :}
+            ;
+
+etiq_salto      ::= {: ParEt e = new ParEt(newEtiq(),newEtiq());RESULT = e; :} ;
+etiq_else       ::= {: ElsEt e = new ElsEt(); e.fin = newEtiq(); e.sv = newEtiq(); e.sf = newEtiq(); RESULT = e;  :};
+etiq_bucle      ::= {: BucEt e = new BucEt(); e.ini = newEtiq(); e.sv = newEtiq(); e.sf = newEtiq(); RESULT = e;  :};
+etiq_for        ::= {: ForEt e = new ForEt(); e.ini = newEtiq(); e.sv = newEtiq(); e.sf = newEtiq(); e.ct = newEtiq(); RESULT = e;  :};
+var             ::= {: String t = newVar();RESULT = t; :};

@@ -1,0 +1,38 @@
+// Examen
+
+import java_cup.runtime.*;
+
+parser code {:  
+
+    public void syntax_error(Symbol cur_token){
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token){
+        System.err.println("Syntax error en linea" + .lex.getLine() + ", columna " + .lex.getColumn() + " con el token "+ sym.terminalNames[cur_token.sym]);
+        // report_error("Syntax error", null);
+        done_parsing();
+    }
+
+
+:}
+
+/* Terminales */
+
+
+/* No Terminales */
+
+non terminal listaExp;
+non terminal linea;
+
+
+/* Precedencia */
+
+
+
+/* Gramatica */
+
+listaExp  ::= listaExp linea      
+            | linea 
+            ;
+
+linea     ::= 

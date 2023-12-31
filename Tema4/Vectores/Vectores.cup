@@ -1,0 +1,103 @@
+import java_cup.runtime.*;
+import java.lang.String;
+import java.util.HashMap;
+import java.util.ArrayList;
+
+parser code {:
+	public void syntax_error(Symbol cur_token){
+	}
+
+    public void unrecovered_syntax_error(Symbol cur_token){
+        System.err.println("Syntax error en linea" + Vectores.lex.getLine() + ", columna " + Vectores.lex.getColumn() + " con el token "+ sym.terminalNames[cur_token.sym]);
+        // report_error("Syntax error", null);
+        done_parsing();
+    }
+:}
+
+
+action code {:
+
+	int num;
+	int rep;
+	public boolean primero = true;
+	public boolean imprimido = false;
+	public void imprimir(){
+		if(!primero){
+			Vectores.out.print(",");
+		}else{
+			primero = false;
+		}
+		Vectores.out.print(rep+","+num);
+	}
+
+:}
+
+init with {:
+
+:}
+
+/* Terminales */
+terminal            AP, CP, COMA;
+terminal            C, D, I, L;
+terminal Integer    NUMERO;
+
+/* No terminales */
+
+non terminal listaExp;
+non terminal linea;
+non terminal vector;
+non terminal vectorD;
+non terminal Integer vectorL;
+non terminal String vectorI;
+
+/* Precedencia */
+
+precedence left COMA;
+precedence left AP,CP;
+
+
+/* Gramatica */
+
+listaExp  ::= listaExp linea {: primero = true;imprimido = false; :}
+            | linea {: primero = true;imprimido = false; :}
+            ;
+
+linea     ::= C AP {: Vectores.out.print("("); :} vector {: if(!imprimido){imprimir();} :} CP {:  Vectores.out.print(")"); :}    
+			| C AP {: Vectores.out.print("("); :}  CP {: Vectores.out.println(")"); :}
+			| D AP {: Vectores.out.print("("); :}  CP {: Vectores.out.println(")"); :}
+			| D AP {: Vectores.out.print("("); :} vectorD CP {: Vectores.out.println(")"); :}
+			| L AP {: Vectores.out.print("("); :}  CP {: Vectores.out.println("):0"); :}
+			| L AP {: Vectores.out.print("("); :} vectorL:l CP {: Vectores.out.println("):"+l); :}
+			| I AP {: Vectores.out.print("("); :}  CP {: Vectores.out.println(")"); :}
+			| I AP {: Vectores.out.print("("); :} vectorI:v {: Vectores.out.print(v); :} CP {: Vectores.out.println(")"); :}
+			;
+
+vector    ::=	vector  COMA NUMERO:n {: if(n == num){rep++;imprimido = false;}else{if(imprimido){Vectores.out.print(",");imprimido = false;}else{imprimir();}num = n;rep = 1;} :}
+			|   vector COMA AP {: if(!imprimido){imprimir();rep = 0;imprimido = true;}else{imprimido = false;} Vectores.out.print(",(");primero = true; :} vector {: imprimir();rep = 0; :} CP {: Vectores.out.print(")"); imprimido = true; :}
+			|   NUMERO:n {: num = n; rep = 1; :}
+			|   AP {: Vectores.out.print("("); :} vector {: imprimir(); :}  CP {: Vectores.out.print(")");imprimido = true; :}
+			;
+
+vectorD   ::= NUMERO:n1 COMA NUMERO:n2 {: for(int i = 0;i<n1-1;i++){Vectores.out.print(n2+",");}Vectores.out.print(n2); :}
+			| vectorD COMA NUMERO:n1 COMA NUMERO:n2 {: Vectores.out.print(",");for(int i = 0;i<n1-1;i++){Vectores.out.print(n2+",");}Vectores.out.print(n2); :}
+			| AP {: Vectores.out.print("("); :} vectorD CP {: Vectores.out.print(")"); :}
+			| AP {: Vectores.out.print("("); :}  CP {: Vectores.out.print(")"); :}
+			| vectorD COMA AP {: Vectores.out.print(",("); :} vectorD CP {: Vectores.out.print(")"); :}
+			| vectorD COMA AP {: Vectores.out.print(",("); :}  CP {: Vectores.out.print(")"); :}
+			;
+
+vectorI	   ::= NUMERO:n {: RESULT = n.toString(); :}
+			 | vectorI:v COMA NUMERO:n {: RESULT = n+","+v; :}
+			 | AP vectorI:v CP {: RESULT = "("+v+")";:}
+			 | vectorI:v1 COMA AP vectorI:v2 CP {: RESULT = "("+v2+"),"+v1;:}
+			 | vectorI:v1 COMA AP  CP {: RESULT = "(),"+v1;:}
+			 | AP CP {: RESULT = "()"; :}
+			 ;
+
+vectorL	   ::= 	vectorL:l  COMA NUMERO:n {:Vectores.out.print(","+n); RESULT = l++;:}
+			|   vectorL:l1 COMA AP {: Vectores.out.print(",("); :} vectorL:l2 CP {: Vectores.out.print("):"+l2); RESULT = l1++; :}
+			|   NUMERO:n {: Vectores.out.print(n); RESULT = 1; :}
+			|   AP {: Vectores.out.print("("); :} vectorL:l CP {: Vectores.out.print("):"+l); RESULT = 1; :}
+			|   AP CP {: Vectores.out.print("():0"); RESULT = 1; :}
+			|   vectorL:l1 COMA AP CP {: Vectores.out.print("():0"); RESULT = l1++; :}
+			;

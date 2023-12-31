@@ -1,0 +1,104 @@
+// Calculadora (version 2) 
+import java_cup.runtime.*;
+
+parser code {:  
+
+    public void syntax_error(Symbol cur_token){
+    }
+
+    public void unrecovered_syntax_error(Symbol cur_token){
+        System.err.println("Syntax error en linea" + Calculadora.lex.getLine() + ", columna " + Calculadora.lex.getColumna() + " con el token "+ sym.terminalNames[cur_token.sym]);
+        // report_error("Syntax error", null);
+        done_parsing();
+    }
+
+
+:}
+
+action code{:
+
+    class ParEt{public String sv,sf;}
+    class ParEt {public string ef,efinal;}
+    class EyV {public string e,v; }
+    class EtFor {public String ee,ec;}
+    TablaSimbolos tabla = new TablaSimbolos();
+
+:}
+
+
+/* Terminales */
+terminal            MAS, MENOS, MULT, DIVID, MENOSUNARIO, IGUAL, IF, ELSE, ASIGNA;
+terminal            AP, CP;
+terminal            PYC;
+terminal String     ID;
+terminal int        ENTERO;
+
+/* No terminales */
+
+non terminal lista_de_sent;
+non terminal sentencia;
+non terminal expresion;
+non terminal condicion;
+non terminal ParEt etiq_salto;
+non terminal EyV EtiqYVar;
+non terminal EtFor Etiq_for;
+non terminal Integer IBloque;
+/* Precedencia */
+precedence left MAS,MENOS;
+precedence left MULT,DIVID;
+precedence left MENOSUNARIO;
+
+/* Gramatica */
+lista_de_sent ::= sentencia 
+                | lista_de_sent sentencia
+                ;
+
+sentencia     ::= expresion PYC 
+                IF etiqF:f AP condicion:c CP {: PLC.out.println(c.sv +":"); :} sentencia {: PLC.out.println("goto "+f+";");PLC.out.println(c.sf +":";) :}
+                    else_If {: PLC.out.println(f+":"); :}
+                /*| IF etiq_salto:e AP condicion:c CP {:PLC.out.println("if ("+c + "== 0) goto "+e.ef+";");:} 
+                  sentencia {: PLC.out.println("goto "+e.efinal+";"); PLC.out.println(e.ef+":"): :}
+                  else_If {: PLC.out.println(e.final+":"); :}*/
+                | FOR AP expresion:e1 PCOMA Etiq_for:e {: PLC.out.println(e.ec+":"); :} // For hecho con primer if
+                Condicion:c PCOMA {: PLC.out.println(e.ee+" :"); :} expresion:e2 CP 
+                {: PLC.out.println("goto "+e.ec+";"); PLC.out.println(c.ev+" :"); :}
+                sentencia
+                {: PLC.out.println("goto "+e.ee+";");PLC.out.println(c.ef+":"); :}
+                | A_LLAVE Ibloque:b lista_de_sent C_LLAVE; {: tabla.borrarBloque(tabla.bActual); TablaSimbolos.bActual = b; :}
+
+expresion      ::= ENTERO : e {: RESULT  = e.toString(); :}
+                 | IDENT : i {: RESULT = i; :}
+                 | expresion:e1 MAS expresion:e2 {: String vD = new Var(); PLC.out.println(vD +" = "+e1+" + "+e2+";"); RESULT = vD; :}
+                 | MENOS expresion:e1 {:  String vD = new Var(); PLC.out.println(vD +" = 0"+" - "+e1+";"); RESULT = vD; :} %prec MENOSUNARIO
+                 | AP expresion:e1 CP {: RESULT = e1; :}
+                 | IDENT ASIGNA expresion:e1 {: PLC.out.println(i+" = "+e1+";");RESULT =  i; :}
+
+else_If        ::=  ELSE sentencia
+                 | 
+                 ;
+
+condicion      ::= expresion:e1 IGUAL expresion:e2 {: ParEt et = new ParEt(newEtiq(),newEtiq());PLC.out.println("if ("+e1+"=="+e2+") goto "+et.sv+";");
+                                                     PLC.out.println("if ("+e1+"=="+e2+") goto "+et.sf+";");RESULT = et;:}
+                 | expresion:e1 DIFETENTE expresion:e2 {: ParEt et = new ParEt(newEtiq(),newEtiq());PLC.out.println("if ("+e1+"=="+e2+") goto "+et.sf+";");
+                                                     PLC.out.println("goto "+et.sv+";");RESULT = et;:}
+                 | ADMIN condicion:c       {: RESULT = new ParEt(c.sf,c.sv); :}
+                 | expresion:e1 MAYOR expresion:e2 {: ParEt et = new ParEt(newEtiq(),newEtiq());PLC.out.println("if ("+e1+">"+e2+") goto "+et.sv+";");
+                                                     PLC.out.println("if ("+e1+"=="+e2+") goto "+et.sf+";");RESULT = et;:}
+                 |expresion:e1 MENOR expresion:e2 {: ParEt et = new ParEt(newEtiq(),newEtiq());PLC.out.println("if ("+e1+">="+e2+") goto "+et.sf+";");
+                                                     PLC.out.println("if ("+e1+"=="+e2+") goto "+et.sv+";");RESULT = et;:}
+                 | condicion:c1 AND {: PLC.out.println(c1.sv+":"); :} condicion:c2  {: ParEt et = new ParEt(newEtiq(),newEtiq());PLC.out.println(c2.sv+":");PLC.out.println("goto "+ et.sv +";");PLC.out.println(c1.sf+":");
+                 PLC.out.println(c2.sf+":");PLC.out.println("goto "+ et.sf +";");RESULT = et; :}
+
+Condicion      ::= Expresion : e1 IGUAL Expresion : e2 {: String v = new Var(); String e = new Etiq(); PLC.out.println(v+ "= 1;"); 
+                    PLC.out.println("if ("+e1+"=="+e2+") goto "+e+";");PLC.out.println(v+" = 0; "+e+";");RESULT = v; :}
+                 | Expresion:e1 AND EtiqYVar:ev //Como se necesita usar la misma variable en dos partes, se crea un objeto
+                  {: PLC.out.println(ev.v+"= 0;");PLC.out.println("if ("+e1+" == 0 goto "+ev.e+";"); :}
+                    Expresion : e2 {: PLC.out.println("if ("+e2+"==0 goto "+ev.e+";");PLC.out.println(ev.v+"= 1;");
+                   PLC.out.println(ev.e+";");RESULT = ev.v; :}
+                   //Este metodo se hace por devolver valores logicos ( + facil )
+
+EtiqYVar ::=   {: EyV ev = new EyV();ev.e = new Etiq(); ev.v = new Var(); RESULT = ev; :}
+
+etiq_salto      ::= {: ParEt e = new ParEt; e.ef = new Etiq(); e.efinal = new Etiq(); RESULT = e; :}
+Etiq_for ::= {: EtFor e = new EtFor; e.ee = new Etiq(); e.ec = new Etiq(); RESULT = e; :}
+IBloque ::= {: RESULT = Integer.valueOf(TablaSimbolos.newBloque()); :}
