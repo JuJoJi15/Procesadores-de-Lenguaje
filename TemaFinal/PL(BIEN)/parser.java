@@ -826,7 +826,7 @@ class CUP$parser$actions {
 		int e2left = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
 		int e2right = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
 		String e2 = (String)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
-		 ParEt e = new ParEt(newEtiq(),newEtiq());PLC.out.println("if("+e1+">"+e2+") goto "+e.sf+";");PLC.out.println("goto "+e.sv+";");RESULT = e; 
+		 ParEt e = new ParEt(newEtiq(),newEtiq());PLC.out.println("if("+e2+"<"+e1+") goto "+e.sf+";");PLC.out.println("goto "+e.sv+";");RESULT = e; 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("Condicion",3, ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
           return CUP$parser$result;
