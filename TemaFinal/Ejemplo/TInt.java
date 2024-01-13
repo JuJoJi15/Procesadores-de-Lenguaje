@@ -8,7 +8,7 @@ public class TInt extends Tipo {
     private TInt(){
         super("int",0);
     }    
-    public stattic TInt getInstancia(){
+    public static TInt getInstancia(){
         return instancia;
     }
     public Objeto metodo(String m, Vector<Objeto> p){

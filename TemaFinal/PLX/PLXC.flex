@@ -30,6 +30,7 @@ import java_cup.runtime.*;
 \<      { return new Symbol(sym.MENOR); }
 \!\=    { return new Symbol(sym.DIF); }
 \!      { return new Symbol(sym.EXC); }
+\,      { return new Symbol(sym.COMA); }
 \;      { return new Symbol(sym.PYC); }
 \(      { return new Symbol(sym.AP); }
 \)      { return new Symbol(sym.CP); }
@@ -43,6 +44,7 @@ while   { return new Symbol(sym.WHILE, yytext()); }
 do      { return new Symbol(sym.DO, yytext()); }
 for     { return new Symbol(sym.FOR, yytext()); }
 print   { return new Symbol(sym.PRINT, yytext()); }
+int | char | float     { return new Symbol(sym.TIPO); }
 (0|[1-9][0-9]*) { return new Symbol(sym.ENTERO, yytext()); }
 [a-zA-Z][a-zA-Z0-9]*            { return new Symbol(sym.IDENT, yytext() ); }
 [\s\r]      {}
