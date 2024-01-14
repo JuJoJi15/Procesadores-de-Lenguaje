@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java_cup.runtime.*;
+import java.util.*;
 parser code {:
 
  public void syntax_error(Symbol cur_token){
@@ -25,31 +26,21 @@ action code {:
 
     }
 
-    public void Error(){
-        PLXC.out.println("error;");
-        PLXC.out.println("halt;");
-    }
-
     
-    public String newVar(){
-        String res = "t"+nVar;
-        nVar++;
-        return res;
-    }
 
-    TablaSimbolos tablaS = new TablaSimbolos();
+    public TablaSimbolos tablaS = new TablaSimbolos();
 
 :}
 
 /* TERMINALES */
 
-terminal            MAS, MENOS, MULT, DIVID, MENOSUNARIO, IGUAL, ASIGNA, EXC, DIF;
+terminal            MAS, MENOS, MULT, DIVID, MENOSUNARIO, IGUAL, ASIGNA, NOT, DIF;
 terminal            AP, CP, ALL, CLL;
 terminal            COMA, PYC;
 terminal            MAYOR,MENOR,MAYIG,MENIG;
 terminal            AND, OR;
 terminal            IF, ELSE, WHILE, DO, FOR, PRINT;
-terminal            TIPO;
+terminal String     TIPO;
 terminal String     IDENT;
 terminal String     ENTERO;
 
@@ -57,8 +48,9 @@ terminal String     ENTERO;
 
     non terminal Lista_de_sent;
     non terminal Sentencia;
-    non terminal Declaracion;
-    non terminal String Expresion;
+    non terminal ArrayList<String> Declaracion;
+    non terminal ArrayList<String> Lista;
+    non terminal Objeto Expresion;
     non terminal ParEt Condicion;
     non terminal String etiq_salto;
     non terminal ParEt etiq_bucle;
@@ -71,7 +63,9 @@ precedence left MAS,MENOS;
 precedence left MULT,DIVID;
 precedence left IGUAL, MENIG, MAYIG;
 precedence left DIF, MENOR, MAYOR;
-precedence left EXC, AND, OR;
+precedence left OR;
+precedence left AND;
+precedence left NOT;
 precedence left IDENT, ENTERO;
 precedence left MENOSUNARIO;
 precedence left AP, CP;
@@ -89,55 +83,102 @@ Sentencia ::= Expresion PYC
             | WHILE etiq_salto:e {: PLXC.out.println(e+":"); :} AP Condicion:c CP {: PLXC.out.println(c.sv+":"); :} Sentencia {: PLXC.out.println("goto "+e+";");PLXC.out.println(c.sf+":"); :}
             | DO etiq_salto:e {: PLXC.out.println(e+":"); :} Sentencia WHILE AP Condicion:c CP {: PLXC.out.println(c.sv+":");PLXC.out.println("goto "+e+";"); :} PYC {: PLXC.out.println(c.sf+":"); :}  
             | FOR etiq_bucle:e AP Expresion:e1 PYC {: PLXC.out.println(e.sv+":"); :} Condicion:c PYC {: PLXC.out.println(e.sf+":"); :} Expresion:e2 {: PLXC.out.println("goto "+e.sv+" ;"); :} CP {: PLXC.out.println(c.sv+":"); :} Sentencia  {: PLXC.out.println("goto "+e.sf+";");PLXC.out.println(c.sf+":"); :}
-            | PRINT AP Expresion:e CP PYC {: PLXC.out.println("print "+e+" ;"); :}
-            | ALL IBloque:b Lista_de_sent CLL {: tablaS.borrarBloque(bActual); tablaS.bActual = b; :}
+            | PRINT AP Expresion:e CP PYC {: Vector<Objeto> p = new Vector<Objeto>();e.metodos("print",p); :}
+            | ALL {:  tablaS.newBloque(); :} Lista_de_sent CLL {: tablaS.borrarBloque(); :}
             ;
 
-IBloque ::=                                              {: RESULT = tablaS.newBloque(); :}
-          ;
 
-Declaracion ::= TIPO Declaracion:d {: :}
-              | ENTERO:e COMA Declaracion:d {: d.add(e);RESULT = d; :}
-              | ENTERO:e {: ArrayList<String> ls = new ArrayList<>(); ls.add(e); RESULT = ls; :}
-              |
+
+Declaracion ::= TIPO:t Lista:l                             {: 
+                                                            switch(t){
+                                                                case "int":
+                                                                   for(String i : l){
+                                                                        if(!tablaS.contiene(i)){
+                                                                            Instancia o = new Instancia(i,TInt.getInstancia(),tablaS.bActual,true);
+                                                                            tablaS.addObj(o);
+                                                                        }else{ 
+                                                                            tablaS.Error();
+                                                                        }
+                                                                    }
+                                                                    break;
+                                                                default:
+                                                                    tablaS.Error();
+                                                                    break;
+                                                            
+                                                            }
+                                                            RESULT = l;
+                                                         :};
+Lista ::=     IDENT:i COMA Lista:l {: l.add(i);RESULT = l; :}
+            | IDENT:i {: ArrayList<String> ls = new ArrayList<>(); ls.add(i); RESULT = ls; :}
               ;
 
-Expresion ::= ENTERO:e                                   {: RESULT = e.toString(); :}
-            | IDENT:i                                    {: RESULT = i; ;}
+Expresion ::= ENTERO:e                                   {: Instancia o = new Instancia(e,TInt.getInstancia(),tablaS.bActual,false);RESULT = o; :}
+            | IDENT:i                                    {: RESULT = tablaS.objeto(i); :}
             | Expresion:e1 MAS Expresion:e2              {:
-                                                             Vector<Objeto> p = new Vector<Objeto>;
+                                                             Vector<Objeto> p = new Vector<Objeto>();
                                                              p.add(e2);
                                                              RESULT = e1.metodos("suma", p);
                                                          :}
+            | Expresion:e1 MENOS Expresion:e2              {:
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             p.add(e2);
+                                                             RESULT = e1.metodos("resta", p);
+                                                         :}
+            | Expresion:e1 MULT Expresion:e2              {:
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             p.add(e2);
+                                                             RESULT = e1.metodos("multiplicar", p);
+                                                         :}
+            | Expresion:e1 DIVID Expresion:e2              {:
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             p.add(e2);
+                                                             RESULT = e1.metodos("dividir", p);
+                                                         :}                                             
             |MENOS Expresion:e1                          {:
-                                                             String vDest = newVar(); //Puede que haya que sustituir newVar pr newNumObj 
-                                                             PLC.out.println(vDest + "=0-" + e1 + ";");
-                                                             RESULT = vDest;
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             RESULT = e1.metodos("menosUnario",p);
                                                          :} %prec MENOSUNARIO
             | AP Expresion:e CP                          {: RESULT = e; :}
-            | IDENT:i ASIGNA exprsion:e                  {:
-                                                             if (!tabla.contiene(i)) {
-                                                                Error();
+            | IDENT:i ASIGNA Expresion:e                  {:
+                                                             if (!tablaS.contiene(i)) {
+                                                                tablaS.Error();
                                                              }
-                                                             Objeto o = tabla.objeto(i);
+                                                             Objeto o = tablaS.objeto(i);
                                                              if (!(o instanceof Instancia)) {
-                                                                Error();
+                                                                tablaS.Error();
                                                              }
-                                                             Vector<Objeto> p = new Vector<Objeto>;
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             p.add(e);
+                                                             RESULT = o.metodos("asigna", p);
+                                                         :}
+            | Declaracion:d ASIGNA Expresion:e                  {:
+
+                                                             if (d.size() != 1){
+                                                                tablaS.Error();
+                                                             }
+
+                                                             if (!tablaS.contiene(d.get(0))) {
+                                                                tablaS.Error();
+                                                             }
+                                                             Objeto o = tablaS.objeto(d.get(0));
+                                                             if (!(o instanceof Instancia)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             Vector<Objeto> p = new Vector<Objeto>();
                                                              p.add(e);
                                                              RESULT = o.metodos("asigna", p);
                                                          :}
             ;
 
-Condicion ::= Expresion:e1 IGUAL Expresion:e2  {: ParEt e = new ParEt(tabla.newEtiq(),tabla.newEtiq());PLXC.out.println("if("+e1+"=="+e2+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
-            | Expresion:e1 DIF Expresion:e2  {: ParEt e = new ParEt(tabla.newEtiq(),tabla.newEtiq());PLXC.out.println("if("+e1+"=="+e2+") goto "+e.sf+";");PLXC.out.println("goto "+e.sv+";");RESULT = e; :}
-            | Expresion:e1 MENOR Expresion:e2   {: ParEt e = new ParEt(tabla.newEtiq(),tabla.newEtiq());PLXC.out.println("if("+e1+"<"+e2+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
-            | Expresion:e1 MENIG Expresion:e2  {: ParEt e = new ParEt(tabla.newEtiq(),tabla.newEtiq());PLXC.out.println("if("+e1+"=="+e2+") goto "+e.sv+";");PLXC.out.println("if("+e1+"<"+e2+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
-            | Expresion:e1 MAYOR Expresion:e2   {: ParEt e = new ParEt(tabla.newEtiq(),tabla.newEtiq());PLXC.out.println("if("+e2+"<"+e1+") goto "+e.sf+";");PLXC.out.println("goto "+e.sv+";");RESULT = e; :}
-            | Expresion:e1 MAYIG Expresion:e2 {: ParEt e = new ParEt(tabla.newEtiq(),tabla.newEtiq());PLXC.out.println("if("+e1+"=="+e2+") goto "+e.sv+";");PLXC.out.println("if("+e1+"<"+e2+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :} 
-            | EXC Condicion:c {: ParEt p = new ParEt(c.sf,c.sv);RESULT = p; :}
-            | Condicion:c1 AND {: PLXC.out.println(c1.sv+":"); :} Condicion:c2 {: ParEt p = new ParEt(tabla.newEtiq(),tabla.newEtiq());PLXC.out.println(c2.sv+":"); PLXC.out.println("goto "+p.sv+";");PLXC.out.println(c1.sf+":");PLXC.out.println(c2.sf+":");PLXC.out.println("goto "+p.sf+";");RESULT = p; :}
-            | Condicion:c1 OR {: PLXC.out.println(c1.sf+":"); :} Condicion:c2 {: ParEt p = new ParEt(tabla.newEtiq(),tabla.newEtiq());PLXC.out.println(c2.sf+":"); PLXC.out.println("goto "+p.sf+";");PLXC.out.println(c1.sv+":");PLXC.out.println(c2.sv+":");PLXC.out.println("goto "+p.sv+";");RESULT = p; :}
+Condicion ::= Expresion:e1 IGUAL Expresion:e2  {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"=="+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
+            | Expresion:e1 DIF Expresion:e2  {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"=="+e2.getNombre()+") goto "+e.sf+";");PLXC.out.println("goto "+e.sv+";");RESULT = e; :}
+            | Expresion:e1 MENOR Expresion:e2   {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"<"+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
+            | Expresion:e1 MENIG Expresion:e2  {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"=="+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("if("+e1.getNombre()+"<"+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
+            | Expresion:e1 MAYOR Expresion:e2   {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e2.getNombre()+"<"+e1.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
+            | Expresion:e1 MAYIG Expresion:e2 {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"=="+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("if("+e2.getNombre()+"<"+e1.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :} 
+            | NOT Condicion:c {: ParEt p = new ParEt(c.sf,c.sv);RESULT = p; :}
+            | Condicion:c1 AND {: PLXC.out.println(c1.sv+":"); :} Condicion:c2 {: ParEt p = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println(c2.sv+":"); PLXC.out.println("goto "+p.sv+";");PLXC.out.println(c1.sf+":");PLXC.out.println(c2.sf+":");PLXC.out.println("goto "+p.sf+";");RESULT = p; :}
+            | Condicion:c1 OR {: PLXC.out.println(c1.sf+":"); :} Condicion:c2 {: ParEt p = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println(c2.sf+":"); PLXC.out.println("goto "+p.sf+";");PLXC.out.println(c1.sv+":");PLXC.out.println(c2.sv+":");PLXC.out.println("goto "+p.sv+";");RESULT = p; :}
             | AP Condicion:c CP {: RESULT = c; :}
             ;
 
@@ -145,5 +186,5 @@ Condicion ::= Expresion:e1 IGUAL Expresion:e2  {: ParEt e = new ParEt(tabla.newE
 else_If        ::=  ELSE Sentencia
                  | 
                  ;
-etiq_salto ::= {: RESULT = tabla.newEtiq(); :};
-etiq_bucle ::= {: ParEt e = new ParEt(tabla.newEtiq(),tabla.newEtiq());RESULT = e; :};
+etiq_salto ::= {: RESULT = tablaS.newEtiq(); :};
+etiq_bucle ::= {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());RESULT = e; :};

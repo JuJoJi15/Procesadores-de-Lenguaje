@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 public abstract class Objeto implements Comparable<Objeto> {
     private String nombre;
     private int bloque;
@@ -53,4 +55,6 @@ public abstract class Objeto implements Comparable<Objeto> {
         }
         return 0;
     }
+
+    public abstract Objeto metodos(String o, Vector<Objeto> p);
 }

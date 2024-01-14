@@ -1,0 +1,102 @@
+   a = 1;
+   b = 2;
+   c = 3;
+   if (a < b) goto L0;
+   goto L1;
+L0:
+   print 1;
+   goto L2;
+L1:
+L2:
+   if (b < a) goto L4;
+   goto L3;
+L3:
+   print 2;
+   goto L5;
+L4:
+L5:
+   if (a < b) goto L6;
+   goto L7;
+L6:
+   print 3;
+   goto L8;
+L7:
+L8:
+   if (b < b) goto L10;
+   goto L9;
+L9:
+   print 4;
+   goto L11;
+L10:
+L11:
+   if (b == b) goto L12;
+   goto L13;
+L12:
+   print 5;
+   goto L14;
+L13:
+L14:
+   if (a == b) goto L16;
+   goto L15;
+L15:
+   print 6;
+   goto L17;
+L16:
+L17:
+   if (c < a) goto L19;
+   goto L18;
+L18:
+   if (a == b) goto L21;
+   goto L22;
+L21:
+   $t0 = a * b;
+   $t1 = $t0 * c;
+   print $t1;
+   goto L23;
+L22:
+L23:
+   if (b == c) goto L24;
+   goto L25;
+L24:
+   $t2 = b * c;
+   print $t2;
+   if (b == c) goto L28;
+   goto L27;
+L27:
+   a = 2;
+   goto L29;
+L28:
+L29:
+   c = 7;
+   if (b < a) goto L31;
+   goto L30;
+L30:
+   if (b < c) goto L33;
+   goto L34;
+L33:
+   if (c == b) goto L37;
+   goto L36;
+L36:
+   b = 5;
+   goto L38;
+L37:
+L38:
+   goto L35;
+L34:
+L35:
+   goto L32;
+L31:
+L32:
+   goto L26;
+L25:
+L26:
+   a = 6;
+   goto L20;
+L19:
+L20:
+   $t3 = a + b;
+   $t4 = $t3 + c;
+   $t5 = a * b;
+   $t6 = $t5 * c;
+   $t7 = $t4 + $t6;
+   print $t7;

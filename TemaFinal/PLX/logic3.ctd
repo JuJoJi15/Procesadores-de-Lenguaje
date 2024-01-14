@@ -1,0 +1,159 @@
+a=6;
+b=12;
+c=18;
+if(1==a) goto L1;
+if(1<a) goto L1;
+goto L2;
+L1:
+if(a==5) goto L3;
+if(a<5) goto L3;
+goto L4;
+L3:
+goto L5;
+L2:
+L4:
+goto L6;
+L6:
+b=a;
+if(10<a) goto L7;
+goto L8;
+L8:
+goto L10;
+L5:
+L7:
+goto L9;
+L10:
+if(b==a) goto L11;
+goto L12;
+L11:
+goto L14;
+L9:
+L12:
+goto L13;
+L13:
+a=b;
+goto L0;
+L14:
+L0:
+if(a==b) goto L16;
+goto L17;
+L17:
+if(b==c) goto L18;
+goto L19;
+L19:
+goto L21;
+L16:
+L18:
+goto L20;
+L20:
+print 1;
+goto L15;
+L21:
+L15:
+if(a==b) goto L23;
+goto L24;
+L24:
+if(b==c) goto L25;
+goto L26;
+L26:
+goto L28;
+L23:
+L25:
+goto L27;
+L28:
+print 2;
+goto L22;
+L27:
+L22:
+if(a==b) goto L30;
+goto L31;
+L31:
+if(b==c) goto L32;
+goto L33;
+L32:
+goto L35;
+L30:
+L33:
+goto L34;
+L34:
+print 3;
+goto L29;
+L35:
+L29:
+if(a==b) goto L37;
+goto L38;
+L38:
+if(b==c) goto L39;
+goto L40;
+L39:
+goto L42;
+L37:
+L40:
+goto L41;
+L42:
+print 4;
+goto L36;
+L41:
+L36:
+if(a==b) goto L44;
+goto L45;
+L44:
+if(b==c) goto L46;
+goto L47;
+L46:
+goto L48;
+L45:
+L47:
+goto L49;
+L48:
+print 5;
+goto L43;
+L49:
+L43:
+if(a==b) goto L51;
+goto L52;
+L51:
+if(b==c) goto L53;
+goto L54;
+L53:
+goto L55;
+L52:
+L54:
+goto L56;
+L56:
+print 6;
+goto L50;
+L55:
+L50:
+if(a==b) goto L58;
+goto L59;
+L58:
+if(b==c) goto L60;
+goto L61;
+L61:
+goto L62;
+L59:
+L60:
+goto L63;
+L62:
+print 7;
+goto L57;
+L63:
+L57:
+if(a==b) goto L65;
+goto L66;
+L65:
+if(b==c) goto L67;
+goto L68;
+L68:
+goto L69;
+L66:
+L67:
+goto L70;
+L70:
+print 8;
+goto L64;
+L69:
+L64:
+t0=a*b;
+print t0;

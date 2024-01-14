@@ -1,0 +1,73 @@
+a=2;
+b=3;
+c=4;
+b=a;
+if(a<a) goto L1;
+goto L2;
+L2:
+b=a;
+c=a;
+if(b<a) goto L3;
+goto L4;
+L3:
+goto L6;
+L1:
+L4:
+goto L5;
+L5:
+a=3;
+print 1;
+goto L0;
+L6:
+L0:
+if(a<b) goto L8;
+goto L9;
+L9:
+if(b<c) goto L10;
+goto L11;
+L10:
+if(c<a) goto L12;
+goto L13;
+L12:
+goto L14;
+L11:
+L13:
+goto L15;
+L15:
+if(c<a) goto L16;
+goto L17;
+L16:
+if(c<b) goto L18;
+goto L19;
+L18:
+goto L20;
+L17:
+L19:
+goto L21;
+L20:
+if(b<a) goto L22;
+goto L23;
+L22:
+goto L24;
+L21:
+L23:
+goto L25;
+L25:
+goto L27;
+L14:
+L24:
+goto L26;
+L26:
+goto L29;
+L8:
+L27:
+goto L28;
+L28:
+a=4;
+print 2;
+goto L7;
+L29:
+L7:
+t0=a*b;
+t1=t0*c;
+print t1;

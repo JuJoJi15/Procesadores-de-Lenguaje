@@ -1,0 +1,106 @@
+a=1;
+b=2;
+c=3;
+if(a<b) goto L1;
+goto L2;
+L1:
+print 1 ;
+goto L0;
+L2:
+L0:
+if(a==b) goto L4;
+if(a<b) goto L4;
+goto L5;
+L4:
+print 2 ;
+goto L3;
+L5:
+L3:
+if(a<b) goto L7;
+goto L8;
+L7:
+print 3 ;
+goto L6;
+L8:
+L6:
+if(b==b) goto L10;
+if(b<b) goto L10;
+goto L11;
+L10:
+print 4 ;
+goto L9;
+L11:
+L9:
+if(b==b) goto L13;
+goto L14;
+L13:
+print 5 ;
+goto L12;
+L14:
+L12:
+if(a==b) goto L17;
+goto L16;
+L16:
+print 6 ;
+goto L15;
+L17:
+L15:
+if(a==c) goto L19;
+if(a<c) goto L19;
+goto L20;
+L19:
+if(a==b) goto L22;
+goto L23;
+L22:
+t0=a*b;
+t1=t0*c;
+print t1 ;
+goto L21;
+L23:
+L21:
+if(b==c) goto L25;
+goto L26;
+L25:
+t2=b*c;
+print t2 ;
+if(b==c) goto L29;
+goto L28;
+L28:
+a=2;
+goto L27;
+L29:
+L27:
+c=7;
+if(a==b) goto L31;
+if(a<b) goto L31;
+goto L32;
+L31:
+if(b<c) goto L34;
+goto L35;
+L34:
+if(c==b) goto L38;
+goto L37;
+L37:
+b=5;
+goto L36;
+L38:
+L36:
+goto L33;
+L35:
+L33:
+goto L30;
+L32:
+L30:
+goto L24;
+L26:
+L24:
+a=6;
+goto L18;
+L20:
+L18:
+t3=a+b;
+t4=t3+c;
+t5=a*b;
+t6=t5*c;
+t7=t4+t6;
+print t7 ;

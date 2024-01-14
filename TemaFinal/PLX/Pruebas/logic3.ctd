@@ -1,0 +1,124 @@
+   a = 6;
+   b = 12;
+   c = 18;
+   if (a < 1) goto L1;
+   goto L0;
+L0:
+   if (5 < a) goto L3;
+   goto L2;
+L1:
+   goto L3;
+L3:
+   b = a;
+   if (10 < a) goto L4;
+   goto L5;
+L2:
+   goto L4;
+L5:
+   if (b == a) goto L6;
+   goto L7;
+L4:
+   goto L7;
+L7:
+   a = b;
+   goto L8;
+L6:
+L8:
+   if (a == b) goto L9;
+   goto L10;
+L10:
+   if (b == c) goto L11;
+   goto L12;
+L9:
+   goto L11;
+L11:
+   print 1;
+   goto L13;
+L12:
+L13:
+   if (a == b) goto L14;
+   goto L15;
+L14:
+   if (b == c) goto L16;
+   goto L17;
+L15:
+   goto L16;
+L16:
+   print 2;
+   goto L18;
+L17:
+L18:
+   if (a == b) goto L19;
+   goto L20;
+L20:
+   if (b == c) goto L21;
+   goto L22;
+L19:
+   goto L22;
+L22:
+   print 3;
+   goto L23;
+L21:
+L23:
+   if (a == b) goto L24;
+   goto L25;
+L24:
+   if (b == c) goto L26;
+   goto L27;
+L25:
+   goto L27;
+L27:
+   print 4;
+   goto L28;
+L26:
+L28:
+   if (a == b) goto L29;
+   goto L30;
+L29:
+   if (b == c) goto L31;
+   goto L32;
+L30:
+   goto L32;
+L31:
+   print 5;
+   goto L33;
+L32:
+L33:
+   if (a == b) goto L34;
+   goto L35;
+L35:
+   if (b == c) goto L36;
+   goto L37;
+L34:
+   goto L37;
+L36:
+   print 6;
+   goto L38;
+L37:
+L38:
+   if (a == b) goto L39;
+   goto L40;
+L39:
+   if (b == c) goto L41;
+   goto L42;
+L40:
+   goto L41;
+L42:
+   print 7;
+   goto L43;
+L41:
+L43:
+   if (a == b) goto L44;
+   goto L45;
+L45:
+   if (b == c) goto L46;
+   goto L47;
+L44:
+   goto L46;
+L47:
+   print 8;
+   goto L48;
+L46:
+L48:
+   $t0 = a * b;
+   print $t0;
