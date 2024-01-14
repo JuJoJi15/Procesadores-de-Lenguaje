@@ -1,0 +1,12 @@
+ix=2;
+iy=3;
+fx= (float) ix;
+fy= (float) iy;
+t0=iy*ix;
+t1=fx *r fy;
+error;
+halt;
+t2=fy *r fy;
+t3= (float) t0;
+t4=t2 +r t3;
+print t4;

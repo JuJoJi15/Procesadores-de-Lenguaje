@@ -25,42 +25,42 @@ goto L9;
 L9:
 if(b<c) goto L10;
 goto L11;
-L10:
+L11:
 if(c<a) goto L12;
 goto L13;
 L12:
 goto L14;
-L11:
+L10:
 L13:
 goto L15;
 L15:
-if(c<a) goto L16;
 goto L17;
-L16:
-if(c<b) goto L18;
+L8:
+L14:
+goto L16;
+L17:
+if(c<a) goto L18;
 goto L19;
 L18:
-goto L20;
-L17:
-L19:
+if(c<b) goto L20;
 goto L21;
 L20:
-if(b<a) goto L22;
+goto L22;
+L19:
+L21:
 goto L23;
 L22:
-goto L24;
-L21:
-L23:
+if(b<a) goto L24;
 goto L25;
-L25:
-goto L27;
-L14:
 L24:
 goto L26;
-L26:
-goto L29;
-L8:
+L23:
+L25:
+goto L27;
 L27:
+goto L29;
+L16:
+L26:
 goto L28;
 L28:
 a=4;

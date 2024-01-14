@@ -45,6 +45,7 @@ do      { return new Symbol(sym.DO, yytext()); }
 for     { return new Symbol(sym.FOR, yytext()); }
 print   { return new Symbol(sym.PRINT, yytext()); }
 int | char | float     { return new Symbol(sym.TIPO, yytext()); }
+(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(E[+-][0-9]+)? { return new Symbol(sym.FLOAT, yytext()); }
 (0|[1-9][0-9]*) { return new Symbol(sym.ENTERO, yytext()); }
 [a-zA-Z][a-zA-Z0-9]*            { return new Symbol(sym.IDENT, yytext() ); }
 [\s\r]      {}

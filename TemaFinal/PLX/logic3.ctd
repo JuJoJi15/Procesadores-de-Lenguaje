@@ -52,18 +52,18 @@ L21:
 L15:
 if(a==b) goto L23;
 goto L24;
-L24:
+L23:
 if(b==c) goto L25;
 goto L26;
 L26:
 goto L28;
-L23:
+L24:
 L25:
 goto L27;
-L28:
+L27:
 print 2;
 goto L22;
-L27:
+L28:
 L22:
 if(a==b) goto L30;
 goto L31;
@@ -82,18 +82,18 @@ L35:
 L29:
 if(a==b) goto L37;
 goto L38;
-L38:
+L37:
 if(b==c) goto L39;
 goto L40;
 L39:
 goto L42;
-L37:
+L38:
 L40:
 goto L41;
-L42:
+L41:
 print 4;
 goto L36;
-L41:
+L42:
 L36:
 if(a==b) goto L44;
 goto L45;
@@ -112,18 +112,18 @@ L49:
 L43:
 if(a==b) goto L51;
 goto L52;
-L51:
+L52:
 if(b==c) goto L53;
 goto L54;
 L53:
 goto L55;
-L52:
+L51:
 L54:
 goto L56;
-L56:
+L55:
 print 6;
 goto L50;
-L55:
+L56:
 L50:
 if(a==b) goto L58;
 goto L59;
@@ -142,18 +142,18 @@ L63:
 L57:
 if(a==b) goto L65;
 goto L66;
-L65:
+L66:
 if(b==c) goto L67;
 goto L68;
 L68:
 goto L69;
-L66:
+L65:
 L67:
 goto L70;
-L70:
+L69:
 print 8;
 goto L64;
-L69:
+L70:
 L64:
 t0=a*b;
 print t0;

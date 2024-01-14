@@ -1,0 +1,11 @@
+   ix = 2;
+   iy = 3;
+   $t0 = (float) ix;
+   fx = $t0;
+   $t1 = (float) iy;
+   fy = $t1;
+   $t2 = iy / ix;
+   $t3 = fx /r fy;
+   $t4 = (float) $t2;
+   $t5 = $t4 +r $t3;
+   print $t5;

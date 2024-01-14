@@ -1,0 +1,7 @@
+t0=2.0 /r 3.0;
+t1= (float) 3;
+t2= (float) 2;
+t3=t1 /r t2;
+t4=t0 +r t3;
+t5= (int) t4;
+print t5;

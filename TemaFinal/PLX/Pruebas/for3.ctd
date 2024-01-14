@@ -1,0 +1,39 @@
+   i = 0;
+L0:
+   if (i < k) goto L2;
+   goto L1;
+L3:
+   $t0 = i / 2;
+   i = $t0;
+   goto L0;
+L1:
+   j = 0;
+L4:
+   if (j < k) goto L6;
+   goto L5;
+L7:
+   $t1 = j / 2;
+   j = $t1;
+   goto L4;
+L5:
+   k = 1;
+L8:
+   if (k < x) goto L10;
+   goto L9;
+L11:
+   $t2 = k * k;
+   $t3 = $t2 + 1;
+   k = $t3;
+   goto L8;
+L9:
+   $t4 = x + i;
+   $t5 = $t4 + j;
+   $t6 = $t5 + k;
+   x = $t6;
+   goto L11;
+L10:
+   goto L7;
+L6:
+   goto L3;
+L2:
+   print x;

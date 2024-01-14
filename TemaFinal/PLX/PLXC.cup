@@ -43,6 +43,7 @@ terminal            IF, ELSE, WHILE, DO, FOR, PRINT;
 terminal String     TIPO;
 terminal String     IDENT;
 terminal String     ENTERO;
+terminal String     FLOAT;
 
 /* NO TERMINALES */
 
@@ -66,8 +67,9 @@ precedence left DIF, MENOR, MAYOR;
 precedence left OR;
 precedence left AND;
 precedence left NOT;
-precedence left IDENT, ENTERO;
+precedence left IDENT, ENTERO, FLOAT;
 precedence left MENOSUNARIO;
+precedence left TIPO;
 precedence left AP, CP;
 precedence left ALL,CLL;
 
@@ -101,6 +103,16 @@ Declaracion ::= TIPO:t Lista:l                             {:
                                                                         }
                                                                     }
                                                                     break;
+                                                                case "float":
+                                                                   for(String i : l){
+                                                                        if(!tablaS.contiene(i)){
+                                                                            Instancia o = new Instancia(i,TFloat.getInstancia(),tablaS.bActual,true);
+                                                                            tablaS.addObj(o);
+                                                                        }else{ 
+                                                                            tablaS.Error();
+                                                                        }
+                                                                    }
+                                                                    break;
                                                                 default:
                                                                     tablaS.Error();
                                                                     break;
@@ -113,26 +125,60 @@ Lista ::=     IDENT:i COMA Lista:l {: l.add(i);RESULT = l; :}
               ;
 
 Expresion ::= ENTERO:e                                   {: Instancia o = new Instancia(e,TInt.getInstancia(),tablaS.bActual,false);RESULT = o; :}
+            | FLOAT:f                                    {: Instancia o = new Instancia(f,TFloat.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | IDENT:i                                    {: RESULT = tablaS.objeto(i); :}
             | Expresion:e1 MAS Expresion:e2              {:
                                                              Vector<Objeto> p = new Vector<Objeto>();
-                                                             p.add(e2);
-                                                             RESULT = e1.metodos("suma", p);
+                                                             if(((Instancia) e1).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("suma", p);
+                                                             }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("suma", p);
+                                                             }else{
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("suma", p);
+                                                             }
+                                                             
                                                          :}
             | Expresion:e1 MENOS Expresion:e2              {:
                                                              Vector<Objeto> p = new Vector<Objeto>();
-                                                             p.add(e2);
-                                                             RESULT = e1.metodos("resta", p);
+                                                             if(((Instancia) e1).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("resta", p);
+                                                             }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("resta", p);
+                                                             }else{
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("resta", p);
+                                                             }
                                                          :}
             | Expresion:e1 MULT Expresion:e2              {:
                                                              Vector<Objeto> p = new Vector<Objeto>();
-                                                             p.add(e2);
-                                                             RESULT = e1.metodos("multiplicar", p);
+                                                             if(((Instancia) e1).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("multiplicar", p);
+                                                             }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("multiplicar", p);
+                                                             }else{
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("multiplicar", p);
+                                                             }
                                                          :}
             | Expresion:e1 DIVID Expresion:e2              {:
                                                              Vector<Objeto> p = new Vector<Objeto>();
-                                                             p.add(e2);
-                                                             RESULT = e1.metodos("dividir", p);
+                                                             if(((Instancia) e1).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("dividir", p);
+                                                             }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("dividir", p);
+                                                             }else{
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("dividir", p);
+                                                             }
                                                          :}                                             
             |MENOS Expresion:e1                          {:
                                                              Vector<Objeto> p = new Vector<Objeto>();
@@ -168,6 +214,23 @@ Expresion ::= ENTERO:e                                   {: Instancia o = new In
                                                              p.add(e);
                                                              RESULT = o.metodos("asigna", p);
                                                          :}
+            | AP TIPO:t CP Expresion:e                   {:
+                                                            Vector<Objeto> p = new Vector<Objeto>();
+                                                            switch(t){
+                                                                case "int":
+                                                                    p.add(TInt.getInstancia());
+                                                                    break;
+                                                                case "float":
+                                                                    p.add(TFloat.getInstancia());
+                                                                    break;
+                                                                default:
+                                                                    TablaSimbolos.Error();
+                                                                    break;
+                                                            }
+                                                            RESULT = e.metodos("convertir", p);
+            
+                                                         :}
+            |
             ;
 
 Condicion ::= Expresion:e1 IGUAL Expresion:e2  {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"=="+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
