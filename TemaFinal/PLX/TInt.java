@@ -30,7 +30,7 @@ public class TInt extends Tipo {
             if (!(p.firstElement() instanceof Instancia)) {
                 TablaSimbolos.Error();
             }
-            if ((((Instancia) p.firstElement())).getTipo() != instancia) {
+            if ((((Instancia) p.firstElement())).getTipo() != instancia && (((Instancia) p.firstElement())).getTipo() != TFloat.getInstancia()) {
                 TablaSimbolos.Error();
             }
             if (!o.isMutable()) {
@@ -38,7 +38,7 @@ public class TInt extends Tipo {
             }
             if((((Instancia) p.firstElement())).getTipo() == instancia){
                 PLXC.out.println(o.getNombre() + "=" + p.firstElement().getNombre() + ";");
-            }else{
+            }else if((((Instancia) p.firstElement())).getTipo() == TFloat.getInstancia()){
                 PLXC.out.println(o.getNombre() + "= (int) " + p.firstElement().getNombre() + ";");
             }
             return p.firstElement();
@@ -110,11 +110,16 @@ public class TInt extends Tipo {
             if (!(p.firstElement() instanceof Tipo)) {
                 TablaSimbolos.Error();
             }
-            if ((((Tipo) p.firstElement())) != TFloat.getInstancia()) {
+            if ((((Tipo) p.firstElement())) != TFloat.getInstancia() && (((Tipo) p.firstElement())) != TChar.getInstancia()) {
                 TablaSimbolos.Error();
             }
-            Objeto nObj = new Instancia(Objeto.newNumObj(),(Tipo) p.firstElement(), TablaSimbolos.bActual, false);
-            PLXC.out.println(nObj.getNombre() + "= (float) " + o.getNombre() + ";");
+            Objeto nObj = null;
+            if((((Tipo) p.firstElement())) == TFloat.getInstancia()){
+                 nObj = new Instancia(Objeto.newNumObj(),(Tipo) p.firstElement(), TablaSimbolos.bActual, false);
+                PLXC.out.println(nObj.getNombre() + "= (float) " + o.getNombre() + ";");
+            }else if((((Tipo) p.firstElement())) == TChar.getInstancia()){
+                 nObj = new Instancia(o.getNombre(),(Tipo) p.firstElement(), TablaSimbolos.bActual, false);
+            }
             return nObj;
         }
         return null;

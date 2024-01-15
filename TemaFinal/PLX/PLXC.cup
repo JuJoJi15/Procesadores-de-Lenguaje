@@ -44,6 +44,7 @@ terminal String     TIPO;
 terminal String     IDENT;
 terminal String     ENTERO;
 terminal String     FLOAT;
+terminal String     CHAR;
 
 /* NO TERMINALES */
 
@@ -113,6 +114,16 @@ Declaracion ::= TIPO:t Lista:l                             {:
                                                                         }
                                                                     }
                                                                     break;
+                                                                case "char":
+                                                                   for(String i : l){
+                                                                        if(!tablaS.contiene(i)){
+                                                                            Instancia o = new Instancia(i,TChar.getInstancia(),tablaS.bActual,true);
+                                                                            tablaS.addObj(o);
+                                                                        }else{ 
+                                                                            tablaS.Error();
+                                                                        }
+                                                                    }
+                                                                    break;
                                                                 default:
                                                                     tablaS.Error();
                                                                     break;
@@ -126,6 +137,7 @@ Lista ::=     IDENT:i COMA Lista:l {: l.add(i);RESULT = l; :}
 
 Expresion ::= ENTERO:e                                   {: Instancia o = new Instancia(e,TInt.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | FLOAT:f                                    {: Instancia o = new Instancia(f,TFloat.getInstancia(),tablaS.bActual,false);RESULT = o; :}
+            | CHAR:c                                    {: Instancia o = new Instancia(c,TChar.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | IDENT:i                                    {: RESULT = tablaS.objeto(i); :}
             | Expresion:e1 MAS Expresion:e2              {:
                                                              Vector<Objeto> p = new Vector<Objeto>();
@@ -222,6 +234,9 @@ Expresion ::= ENTERO:e                                   {: Instancia o = new In
                                                                     break;
                                                                 case "float":
                                                                     p.add(TFloat.getInstancia());
+                                                                    break;
+                                                                case "char":
+                                                                    p.add(TChar.getInstancia());
                                                                     break;
                                                                 default:
                                                                     TablaSimbolos.Error();

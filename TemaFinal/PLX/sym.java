@@ -15,6 +15,7 @@ public class sym {
   public static final int PYC = 16;
   public static final int OR = 22;
   public static final int IGUAL = 7;
+  public static final int CHAR = 33;
   public static final int WHILE = 25;
   public static final int ALL = 13;
   public static final int NOT = 9;
@@ -72,7 +73,8 @@ public class sym {
   "TIPO",
   "IDENT",
   "ENTERO",
-  "FLOAT"
+  "FLOAT",
+  "CHAR"
   };
 }
 

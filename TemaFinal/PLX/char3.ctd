@@ -1,0 +1,4 @@
+x=67;
+a=x;
+print x;
+printc a;
