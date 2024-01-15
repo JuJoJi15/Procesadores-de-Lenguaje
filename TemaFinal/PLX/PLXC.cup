@@ -26,7 +26,25 @@ action code {:
 
     }
 
-    
+    public String tipoD;
+    public Tipo getTipo(){
+      Tipo res = null;
+      switch(tipoD){
+         case "int":
+            res = TInt.getInstancia();
+            break;
+         case "float":
+            res = TFloat.getInstancia();
+            break;
+         case "char":
+            res = TChar.getInstancia();
+            break;
+         default:
+            tablaS.Error();
+            break;
+      }
+      return res;
+    }
 
     public TablaSimbolos tablaS = new TablaSimbolos();
 
@@ -51,7 +69,8 @@ terminal String     CHAR;
     non terminal Lista_de_sent;
     non terminal Sentencia;
     non terminal ArrayList<String> Declaracion;
-    non terminal ArrayList<String> Lista;
+    non terminal Lista;
+    non terminal Lista_aux;
     non terminal Objeto Expresion;
     non terminal ParEt Condicion;
     non terminal String etiq_salto;
@@ -92,48 +111,36 @@ Sentencia ::= Expresion PYC
 
 
 
-Declaracion ::= TIPO:t Lista:l                             {: 
-                                                            switch(t){
-                                                                case "int":
-                                                                   for(String i : l){
-                                                                        if(!tablaS.contiene(i)){
-                                                                            Instancia o = new Instancia(i,TInt.getInstancia(),tablaS.bActual,true);
-                                                                            tablaS.addObj(o);
-                                                                        }else{ 
-                                                                            tablaS.Error();
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                case "float":
-                                                                   for(String i : l){
-                                                                        if(!tablaS.contiene(i)){
-                                                                            Instancia o = new Instancia(i,TFloat.getInstancia(),tablaS.bActual,true);
-                                                                            tablaS.addObj(o);
-                                                                        }else{ 
-                                                                            tablaS.Error();
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                case "char":
-                                                                   for(String i : l){
-                                                                        if(!tablaS.contiene(i)){
-                                                                            Instancia o = new Instancia(i,TChar.getInstancia(),tablaS.bActual,true);
-                                                                            tablaS.addObj(o);
-                                                                        }else{ 
-                                                                            tablaS.Error();
-                                                                        }
-                                                                    }
-                                                                    break;
-                                                                default:
-                                                                    tablaS.Error();
-                                                                    break;
-                                                            
-                                                            }
-                                                            RESULT = l;
-                                                         :};
-Lista ::=     IDENT:i COMA Lista:l {: l.add(i);RESULT = l; :}
-            | IDENT:i {: ArrayList<String> ls = new ArrayList<>(); ls.add(i); RESULT = ls; :}
-              ;
+Declaracion ::= TIPO:t {: tipoD = t; :} Lista {: tipoD = ""; :} ;
+Lista ::=     Lista_aux COMA Lista
+            | Lista_aux   
+            ;
+
+Lista_aux ::= IDENT:i                                      {:
+                                                              if(!tablaS.contiene(i)){
+                                                                  Instancia o = new Instancia(i,getTipo(),tablaS.bActual,true);
+                                                                  tablaS.addObj(o);
+                                                               }else{ 
+                                                                  tablaS.Error();
+                                                               }
+                                                           :}
+            | IDENT:i ASIGNA Expresion:e                    {:
+
+                                                             if(!tablaS.contiene(i)){
+                                                                  Instancia o = new Instancia(i,getTipo(),tablaS.bActual,true);
+                                                                  tablaS.addObj(o);
+                                                               }else{ 
+                                                                  tablaS.Error();
+                                                               }
+                                                             Objeto o = tablaS.objeto(i);
+                                                             if (!(o instanceof Instancia)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             p.add(e);
+                                                             o.metodos("asigna", p);
+                                                         :}
+            ;
 
 Expresion ::= ENTERO:e                                   {: Instancia o = new Instancia(e,TInt.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | FLOAT:f                                    {: Instancia o = new Instancia(f,TFloat.getInstancia(),tablaS.bActual,false);RESULT = o; :}
@@ -147,6 +154,12 @@ Expresion ::= ENTERO:e                                   {: Instancia o = new In
                                                              }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
                                                                 p.add(e1);
                                                                 RESULT = e2.metodos("suma", p);
+                                                             }else if(((Instancia) e1).getTipo() == TInt.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("suma",p);
+                                                             }else if(((Instancia) e2).getTipo() == TInt.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("suma",p);
                                                              }else{
                                                                 p.add(e2);
                                                                 RESULT = e1.metodos("suma", p);
@@ -202,23 +215,6 @@ Expresion ::= ENTERO:e                                   {: Instancia o = new In
                                                                 tablaS.Error();
                                                              }
                                                              Objeto o = tablaS.objeto(i);
-                                                             if (!(o instanceof Instancia)) {
-                                                                tablaS.Error();
-                                                             }
-                                                             Vector<Objeto> p = new Vector<Objeto>();
-                                                             p.add(e);
-                                                             RESULT = o.metodos("asigna", p);
-                                                         :}
-            | Declaracion:d ASIGNA Expresion:e                  {:
-
-                                                             if (d.size() != 1){
-                                                                tablaS.Error();
-                                                             }
-
-                                                             if (!tablaS.contiene(d.get(0))) {
-                                                                tablaS.Error();
-                                                             }
-                                                             Objeto o = tablaS.objeto(d.get(0));
                                                              if (!(o instanceof Instancia)) {
                                                                 tablaS.Error();
                                                              }
