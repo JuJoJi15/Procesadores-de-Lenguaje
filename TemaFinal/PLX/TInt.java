@@ -108,7 +108,7 @@ public class TInt extends Tipo {
             if (!(p.firstElement() instanceof Tipo)) {
                 TablaSimbolos.Error();
             }
-            if ((((Tipo) p.firstElement())) != TFloat.getInstancia() && (((Tipo) p.firstElement())) != TChar.getInstancia()) {
+            if ((((Tipo) p.firstElement())) != TFloat.getInstancia() && (((Tipo) p.firstElement())) != TChar.getInstancia() && (((Tipo) p.firstElement())) != TInt.getInstancia()) {
                 TablaSimbolos.Error();
             }
             Objeto nObj = null;
@@ -117,6 +117,8 @@ public class TInt extends Tipo {
                 PLXC.out.println(nObj.getNombre() + "= (float) " + o.getNombre() + ";");
             }else if((((Tipo) p.firstElement())) == TChar.getInstancia()){
                  nObj = new Instancia(o.getNombre(),(Tipo) p.firstElement(), TablaSimbolos.bActual, false);
+            }else if((((Tipo) p.firstElement())) == TInt.getInstancia()){
+                return o;
             }
             return nObj;
         }
