@@ -51,7 +51,7 @@ public class TChar extends Tipo {
             if ((((Instancia) p.firstElement())).getTipo() != instancia) {
                 TablaSimbolos.Error();
             }
-            Objeto nObj = new Instancia(Objeto.newNumObj(), instancia, TablaSimbolos.bActual, false);
+            Objeto nObj = new Instancia(Objeto.newNumObj(), TInt.getInstancia(), TablaSimbolos.bActual, false);
             PLXC.out.println(nObj.getNombre() + "=" + o.getNombre() + "+" + p.firstElement().getNombre() + ";");
             return nObj;
         }if (m.equals("resta")) {
@@ -61,10 +61,10 @@ public class TChar extends Tipo {
             if (!(p.firstElement() instanceof Instancia)) {
                 TablaSimbolos.Error();
             }
-            if ((((Instancia) p.firstElement())).getTipo() != instancia) {
+            if ((((Instancia) p.firstElement())).getTipo() != instancia && (((Instancia) p.firstElement())).getTipo() != TInt.getInstancia()) {
                 TablaSimbolos.Error();
             }
-            Objeto nObj = new Instancia(Objeto.newNumObj(), instancia, TablaSimbolos.bActual, false);
+            Objeto nObj = new Instancia(Objeto.newNumObj(), TInt.getInstancia(), TablaSimbolos.bActual, false);
             PLXC.out.println(nObj.getNombre() + "=" + o.getNombre() + "-" + p.firstElement().getNombre() + ";");
             return nObj;
         }if (m.equals("print")) {

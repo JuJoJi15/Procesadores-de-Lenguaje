@@ -48,7 +48,7 @@ public class TInt extends Tipo {
             if (!(p.firstElement() instanceof Instancia)) {
                 TablaSimbolos.Error();
             }
-            if ((((Instancia) p.firstElement())).getTipo() != instancia) {
+            if ((((Instancia) p.firstElement())).getTipo() != instancia && (((Instancia) p.firstElement())).getTipo() != TChar.getInstancia()) {
                 TablaSimbolos.Error();
             }
             Objeto nObj = new Instancia(Objeto.newNumObj(), instancia, TablaSimbolos.bActual, false);
@@ -61,7 +61,7 @@ public class TInt extends Tipo {
             if (!(p.firstElement() instanceof Instancia)) {
                 TablaSimbolos.Error();
             }
-            if ((((Instancia) p.firstElement())).getTipo() != instancia) {
+            if ((((Instancia) p.firstElement())).getTipo() != instancia && (((Instancia) p.firstElement())).getTipo() != TChar.getInstancia()) {
                 TablaSimbolos.Error();
             }
             Objeto nObj = new Instancia(Objeto.newNumObj(), instancia, TablaSimbolos.bActual, false);

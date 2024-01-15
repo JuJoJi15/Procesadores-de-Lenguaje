@@ -936,6 +936,12 @@ class CUP$parser$actions {
                                                              }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
                                                                 p.add(e1);
                                                                 RESULT = e2.metodos("suma", p);
+                                                             }else if(((Instancia) e1).getTipo() == TInt.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("suma",p);
+                                                             }else if(((Instancia) e2).getTipo() == TInt.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("suma",p);
                                                              }else{
                                                                 p.add(e2);
                                                                 RESULT = e1.metodos("suma", p);
