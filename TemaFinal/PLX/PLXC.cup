@@ -27,17 +27,29 @@ action code {:
     }
 
     public String tipoD;
-    public Tipo getTipo(){
+    public Tipo getTipo(boolean matriz){
       Tipo res = null;
       switch(tipoD){
          case "int":
-            res = TInt.getInstancia();
+            if(matriz){
+               res = TMInt.getInstancia();
+            }else{
+               res = TInt.getInstancia();
+            }
             break;
          case "float":
-            res = TFloat.getInstancia();
+            if(matriz){
+               res = TMInt.getInstancia();
+            }else{
+               res = TFloat.getInstancia();
+            }
             break;
          case "char":
-            res = TChar.getInstancia();
+            if(matriz){
+               res = TMInt.getInstancia();
+            }else{
+               res = TChar.getInstancia();
+            }
             break;
          default:
             tablaS.Error();
@@ -53,7 +65,7 @@ action code {:
 /* TERMINALES */
 
 terminal            MAS, MENOS, MULT, DIVID, MENOSUNARIO, IGUAL, ASIGNA, NOT, DIF;
-terminal            AP, CP, ALL, CLL;
+terminal            AP, CP, ALL, CLL, AC, CC;
 terminal            COMA, PYC;
 terminal            MAYOR,MENOR,MAYIG,MENIG;
 terminal            AND, OR;
@@ -91,6 +103,7 @@ precedence left IDENT, ENTERO, FLOAT;
 precedence left MENOSUNARIO;
 precedence left TIPO;
 precedence left AP, CP;
+precedence left AC, CC;
 precedence left ALL,CLL;
 
 
@@ -116,9 +129,9 @@ Lista ::=     Lista_aux COMA Lista
             | Lista_aux   
             ;
 
-Lista_aux ::= IDENT:i                                      {:
+Lista_aux ::= IDENT:i                                      {: //¿Cambiar orden?
                                                               if(!tablaS.contiene(i)){
-                                                                  Instancia o = new Instancia(i,getTipo(),tablaS.bActual,true);
+                                                                  Instancia o = new Instancia(i,getTipo(false),tablaS.bActual,true);
                                                                   tablaS.addObj(o);
                                                                }else{ 
                                                                   tablaS.Error();
@@ -127,7 +140,7 @@ Lista_aux ::= IDENT:i                                      {:
             | IDENT:i ASIGNA Expresion:e                    {:
 
                                                              if(!tablaS.contiene(i)){
-                                                                  Instancia o = new Instancia(i,getTipo(),tablaS.bActual,true);
+                                                                  Instancia o = new Instancia(i,getTipo(false),tablaS.bActual,true);
                                                                   tablaS.addObj(o);
                                                                }else{ 
                                                                   tablaS.Error();
@@ -140,12 +153,24 @@ Lista_aux ::= IDENT:i                                      {:
                                                              p.add(e);
                                                              o.metodos("asigna", p);
                                                          :}
+            | IDENT:i AC ENTERO:e CC                     {:
+                                                              if(!tablaS.contiene(i)){
+                                                                  Instancia o = new Instancia(i,getTipo(true),tablaS.bActual,true);
+                                                                  //Añadir tam.
+                                                                  tablaS.addObj(o);
+                                                                  tablaS.addTam(o,Integer.parseInt(e));
+
+                                                               }else{ 
+                                                                  tablaS.Error();
+                                                               }
+                                                         :}
             ;
 
 Expresion ::= ENTERO:e                                   {: Instancia o = new Instancia(e,TInt.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | FLOAT:f                                    {: Instancia o = new Instancia(f,TFloat.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | CHAR:c                                    {: Instancia o = new Instancia(c,TChar.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | IDENT:i                                    {: RESULT = tablaS.objeto(i); :}
+            | IDENT:i AC ENTERO:e CC                      {: Objeto obj = tablaS.objeto(i); Vector<Objeto> p = new Vector<Objeto>();Instancia o = new Instancia(e,TInt.getInstancia(),tablaS.bActual,false);p.add(o); RESULT = obj.metodos("obtener",p); :}
             | Expresion:e1 MAS Expresion:e2              {:
                                                              Vector<Objeto> p = new Vector<Objeto>();
                                                              if(((Instancia) e1).getTipo() == TFloat.getInstancia()){
@@ -210,7 +235,7 @@ Expresion ::= ENTERO:e                                   {: Instancia o = new In
                                                              RESULT = e1.metodos("menosUnario",p);
                                                          :} %prec MENOSUNARIO
             | AP Expresion:e CP                          {: RESULT = e; :}
-            | IDENT:i ASIGNA Expresion:e                  {:
+            | IDENT:i ASIGNA Expresion:e                  {: //¿Cambiar orden?
                                                              if (!tablaS.contiene(i)) {
                                                                 tablaS.Error();
                                                              }
@@ -222,7 +247,29 @@ Expresion ::= ENTERO:e                                   {: Instancia o = new In
                                                              p.add(e);
                                                              RESULT = o.metodos("asigna", p);
                                                          :}
-            | AP TIPO:t CP Expresion:e                   {:
+
+            | IDENT:i AC ENTERO:ent CC ASIGNA Expresion:e                  {: //¿Cambiar orden?
+                                                             
+
+                                                             
+                                                             if (!tablaS.contiene(i)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             Objeto o = tablaS.objeto(i);
+                                                             if (!(o instanceof Instancia)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             if(!tablaS.comprobarTam(o,Integer.parseInt(ent))){
+                                                               tablaS.Error();
+                                                             }
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             p.add(e);
+                                                             Instancia tam = new Instancia(ent,TInt.getInstancia(),0,false);
+                                                             p.add(tam);
+                                                             RESULT = o.metodos("asigna", p);
+                                                         :}
+
+            |AP TIPO:t CP Expresion:e                   {:
                                                             Vector<Objeto> p = new Vector<Objeto>();
                                                             switch(t){
                                                                 case "int":

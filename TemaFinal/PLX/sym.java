@@ -6,40 +6,42 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int AND = 21;
-  public static final int MENOS = 3;
-  public static final int MENOR = 18;
-  public static final int IDENT = 30;
-  public static final int ELSE = 24;
-  public static final int CP = 12;
-  public static final int PYC = 16;
-  public static final int OR = 22;
-  public static final int IGUAL = 7;
-  public static final int CHAR = 33;
-  public static final int WHILE = 25;
-  public static final int ALL = 13;
-  public static final int NOT = 9;
-  public static final int MENIG = 20;
-  public static final int CLL = 14;
-  public static final int IF = 23;
-  public static final int AP = 11;
-  public static final int TIPO = 29;
-  public static final int DO = 26;
-  public static final int COMA = 15;
-  public static final int FLOAT = 32;
-  public static final int MENOSUNARIO = 6;
-  public static final int MAYOR = 17;
-  public static final int EOF = 0;
+  public static final int AC = 15;
   public static final int MULT = 4;
-  public static final int PRINT = 28;
-  public static final int error = 1;
-  public static final int MAYIG = 19;
-  public static final int DIVID = 5;
+  public static final int CHAR = 35;
+  public static final int TIPO = 31;
+  public static final int ENTERO = 33;
+  public static final int FOR = 29;
+  public static final int CP = 12;
+  public static final int NOT = 9;
+  public static final int AND = 23;
+  public static final int IGUAL = 7;
+  public static final int OR = 24;
   public static final int ASIGNA = 8;
-  public static final int ENTERO = 31;
-  public static final int FOR = 27;
-  public static final int MAS = 2;
+  public static final int CC = 16;
+  public static final int IF = 25;
+  public static final int EOF = 0;
+  public static final int error = 1;
+  public static final int COMA = 17;
   public static final int DIF = 10;
+  public static final int MENOS = 3;
+  public static final int MENOR = 20;
+  public static final int IDENT = 32;
+  public static final int MENOSUNARIO = 6;
+  public static final int CLL = 14;
+  public static final int MENIG = 22;
+  public static final int MAYOR = 19;
+  public static final int ELSE = 26;
+  public static final int MAYIG = 21;
+  public static final int WHILE = 27;
+  public static final int FLOAT = 34;
+  public static final int DIVID = 5;
+  public static final int ALL = 13;
+  public static final int AP = 11;
+  public static final int PRINT = 30;
+  public static final int DO = 28;
+  public static final int PYC = 18;
+  public static final int MAS = 2;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -56,6 +58,8 @@ public class sym {
   "CP",
   "ALL",
   "CLL",
+  "AC",
+  "CC",
   "COMA",
   "PYC",
   "MAYOR",

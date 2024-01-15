@@ -4,6 +4,7 @@ import java.util.*;
 public class TablaSimbolos {
     
     private Map<String, Objeto> tabla;
+    private Map<String, Integer> tablaT;
     public static int bActual = 0;
     private static int nEtiq = 0;
     public String newEtiq(){
@@ -20,6 +21,7 @@ public class TablaSimbolos {
     }
     public TablaSimbolos(){
         tabla = new HashMap<String,Objeto>();
+        tablaT = new HashMap<String,Integer>();
     }
 
     // Comprueba si tiene el objeto con nombre n en cualquier bloque
@@ -48,6 +50,18 @@ public class TablaSimbolos {
             }
         }
         bActual--;
+    }
+    public void addTam(Objeto o, int t){
+        tablaT.put(o.getNombre(), t);
+    }
+
+    public int getTam(Objeto o){
+        return tablaT.get(o.getNombre());
+    }
+
+    public boolean comprobarTam(Objeto o,int t){
+        int tam = getTam(o);
+        return t>=0 && t<tam;
     }
 
      /*  Comprueba si el bloque b contiene el obj n
