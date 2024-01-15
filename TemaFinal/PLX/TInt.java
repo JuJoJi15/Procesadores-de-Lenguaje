@@ -30,7 +30,7 @@ public class TInt extends Tipo {
             if (!(p.firstElement() instanceof Instancia)) {
                 TablaSimbolos.Error();
             }
-            if ((((Instancia) p.firstElement())).getTipo() != instancia && (((Instancia) p.firstElement())).getTipo() != TFloat.getInstancia()) {
+            if ((((Instancia) p.firstElement())).getTipo() != instancia) {
                 TablaSimbolos.Error();
             }
             if (!o.isMutable()) {
@@ -38,8 +38,6 @@ public class TInt extends Tipo {
             }
             if((((Instancia) p.firstElement())).getTipo() == instancia){
                 PLXC.out.println(o.getNombre() + "=" + p.firstElement().getNombre() + ";");
-            }else if((((Instancia) p.firstElement())).getTipo() == TFloat.getInstancia()){
-                PLXC.out.println(o.getNombre() + "= (int) " + p.firstElement().getNombre() + ";");
             }
             return p.firstElement();
         }
