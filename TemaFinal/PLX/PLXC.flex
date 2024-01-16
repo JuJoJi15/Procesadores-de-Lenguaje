@@ -30,6 +30,7 @@ import java_cup.runtime.*;
 \<      { return new Symbol(sym.MENOR); }
 \!\=    { return new Symbol(sym.DIF); }
 \!      { return new Symbol(sym.NOT); }
+\.      { return new Symbol(sym.PUNTO); }
 \,      { return new Symbol(sym.COMA); }
 \;      { return new Symbol(sym.PYC); }
 \(      { return new Symbol(sym.AP); }
@@ -47,12 +48,12 @@ do      { return new Symbol(sym.DO, yytext()); }
 for     { return new Symbol(sym.FOR, yytext()); }
 print   { return new Symbol(sym.PRINT, yytext()); }
 int | char | float     { return new Symbol(sym.TIPO, yytext()); }
+length            { return new Symbol(sym.LENGTH, yytext()); }
 (0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(E[+-][0-9]+)? { return new Symbol(sym.FLOAT, yytext()); }
 ('\\'')|('\\b')|('\\n')|('\\f')|('\\r')|('\\t')|('\\\\')|('\\\"') { return new Symbol(sym.CHAR, String.valueOf(Integer.valueOf(yytext().charAt(2)))); }
 ('\\u[0-9A-Za-z]{4}') { return new Symbol(sym.CHAR, String.valueOf(Integer.parseInt(yytext().substring(3,yytext().length()-1), 16))); }
 ('[!-~]') { return new Symbol(sym.CHAR, String.valueOf(Integer.valueOf(yytext().charAt(1)))); }
 (0|[1-9][0-9]*) { return new Symbol(sym.ENTERO, yytext()); }
-[a-zA-Z][a-zA-Z0-9]*\.length            { return new Symbol(sym.LENGTH, yytext()); }
 [a-zA-Z][a-zA-Z0-9]*            { return new Symbol(sym.IDENT, yytext() ); }
 [\s\r]      {}
 [^]     { throw new Error("Illegal character <"+yytext()+">"); } 

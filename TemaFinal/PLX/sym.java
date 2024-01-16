@@ -8,40 +8,41 @@ public class sym {
   /* terminals */
   public static final int AC = 16;
   public static final int MULT = 4;
-  public static final int CHAR = 36;
-  public static final int TIPO = 32;
-  public static final int ENTERO = 34;
-  public static final int FOR = 30;
+  public static final int CHAR = 37;
+  public static final int TIPO = 33;
+  public static final int ENTERO = 35;
+  public static final int FOR = 31;
   public static final int CP = 13;
   public static final int NOT = 9;
-  public static final int AND = 24;
+  public static final int AND = 25;
   public static final int IGUAL = 7;
-  public static final int OR = 25;
+  public static final int OR = 26;
   public static final int ASIGNA = 8;
   public static final int CC = 17;
-  public static final int IF = 26;
+  public static final int IF = 27;
   public static final int EOF = 0;
   public static final int error = 1;
   public static final int COMA = 18;
   public static final int DIF = 10;
   public static final int MENOS = 3;
-  public static final int MENOR = 21;
-  public static final int IDENT = 33;
+  public static final int MENOR = 22;
+  public static final int IDENT = 34;
   public static final int MENOSUNARIO = 6;
   public static final int CLL = 15;
-  public static final int MENIG = 23;
-  public static final int MAYOR = 20;
-  public static final int ELSE = 27;
-  public static final int MAYIG = 22;
-  public static final int WHILE = 28;
-  public static final int FLOAT = 35;
+  public static final int MENIG = 24;
+  public static final int MAYOR = 21;
+  public static final int ELSE = 28;
+  public static final int PUNTO = 19;
+  public static final int MAYIG = 23;
+  public static final int WHILE = 29;
+  public static final int FLOAT = 36;
   public static final int DIVID = 5;
   public static final int ALL = 14;
   public static final int AP = 12;
-  public static final int PRINT = 31;
+  public static final int PRINT = 32;
   public static final int LENGTH = 11;
-  public static final int DO = 29;
-  public static final int PYC = 19;
+  public static final int DO = 30;
+  public static final int PYC = 20;
   public static final int MAS = 2;
   public static final String[] terminalNames = new String[] {
   "EOF",
@@ -63,6 +64,7 @@ public class sym {
   "AC",
   "CC",
   "COMA",
+  "PUNTO",
   "PYC",
   "MAYOR",
   "MENOR",

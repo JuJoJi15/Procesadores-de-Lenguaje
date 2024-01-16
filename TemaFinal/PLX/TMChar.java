@@ -69,6 +69,15 @@ public class TMChar extends Tipo {
             Objeto nObj = new Instancia(Objeto.newNumObj(), TChar.getInstancia(), TablaSimbolos.bActual, false);
             PLXC.out.println(nObj.getNombre()+"=" + o.getNombre() + "["+p.firstElement().getNombre()+"];");
             return nObj;
+        }if(m.equals("print")){
+            for(int i = 0;i<Integer.parseInt(TablaSimbolos.getTam(o));i++){
+                Vector<Objeto> p2 = new Vector<Objeto>();
+                Instancia o2 = new Instancia(String.valueOf(i),TInt.getInstancia(),TablaSimbolos.bActual,false);
+                p2.add(o2);
+                PLXC.out.println();
+                Objeto obj = o.metodos("obtener",p2);
+                obj.metodos("print", p2);
+            }
         }
         return null;
     }

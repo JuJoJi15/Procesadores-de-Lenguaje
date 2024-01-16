@@ -4,7 +4,7 @@ import java.util.*;
 public class TablaSimbolos {
     
     private Map<String, Objeto> tabla;
-    private Map<String, Integer> tablaT;
+    private static Map<String, Integer> tablaT;
     public static int bActual = 0;
     private static int nEtiq = 0;
     public String newEtiq(){
@@ -55,7 +55,7 @@ public class TablaSimbolos {
         tablaT.put(o.getNombre(), t);
     }
 
-    public String getTam(Objeto o){
+    public static String getTam(Objeto o){
         return String.valueOf(tablaT.get(o.getNombre()));
     }
 
