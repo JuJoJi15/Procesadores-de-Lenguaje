@@ -55,14 +55,11 @@ public class TablaSimbolos {
         tablaT.put(o.getNombre(), t);
     }
 
-    public int getTam(Objeto o){
-        return tablaT.get(o.getNombre());
+    public String getTam(Objeto o){
+        return String.valueOf(tablaT.get(o.getNombre()));
     }
 
-    public boolean comprobarTam(Objeto o,int t){
-        int tam = getTam(o);
-        return t>=0 && t<tam;
-    }
+
 
      /*  Comprueba si el bloque b contiene el obj n
     public boolean contiene (String n, int b){

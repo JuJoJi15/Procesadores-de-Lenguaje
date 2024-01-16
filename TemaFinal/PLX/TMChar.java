@@ -1,14 +1,14 @@
 import java.util.Vector;
 
-public class TMInt extends Tipo {
-    private static TMInt instancia = new TMInt();
+public class TMChar extends Tipo {
+    private static TMChar instancia = new TMChar();
     public int tam;
     
-    private TMInt() {
-        super("mint", 0);
+    private TMChar() {
+        super("mchar", 0);
     }
 
-    public static TMInt getInstancia() {
+    public static TMChar getInstancia() {
         return instancia;
     }
 
@@ -32,21 +32,41 @@ public class TMInt extends Tipo {
             if (!(p.firstElement() instanceof Instancia)) {
                 TablaSimbolos.Error();
             }
-            if ((((Instancia) p.firstElement())).getTipo() != TInt.getInstancia()) {
+            if ((((Instancia) p.firstElement())).getTipo() != TChar.getInstancia()) {
                 TablaSimbolos.Error();
             }
             if (!o.isMutable()) {
                 TablaSimbolos.Error();
             }
-            if((((Instancia) p.firstElement())).getTipo() == TInt.getInstancia()){
+            if((((Instancia) p.firstElement())).getTipo() == TChar.getInstancia()){
                 PLXC.out.println(o.getNombre()+"["+p.lastElement().getNombre()+ "]=" + p.firstElement().getNombre() + ";");
             }
+            
+            return p.firstElement();
+        }if (m.equals("asigna")) {
+            if (p.size() != 1) {
+                TablaSimbolos.Error();
+            }
+            
+            if (!(p.firstElement() instanceof Instancia)) {
+                TablaSimbolos.Error();
+            }
+            if ((((Instancia) p.firstElement())).getTipo() != TMChar.getInstancia()) {
+                TablaSimbolos.Error();
+            }
+            if (!o.isMutable()) {
+                TablaSimbolos.Error();
+            }
+            if((((Instancia) p.firstElement())).getTipo() == TMChar.getInstancia()){
+                PLXC.out.println(o.getNombre()+ "=" + p.firstElement().getNombre() + ";");
+            }
+            
             return p.firstElement();
         }if(m.equals("obtener")){
             if(p.size() != 1){
                 TablaSimbolos.Error();
             }
-            Objeto nObj = new Instancia(Objeto.newNumObj(), TInt.getInstancia(), TablaSimbolos.bActual, false);
+            Objeto nObj = new Instancia(Objeto.newNumObj(), TChar.getInstancia(), TablaSimbolos.bActual, false);
             PLXC.out.println(nObj.getNombre()+"=" + o.getNombre() + "["+p.firstElement().getNombre()+"];");
             return nObj;
         }

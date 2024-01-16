@@ -122,7 +122,6 @@ public class TInt extends Tipo {
             }
             return nObj;
         }
-        TablaSimbolos.Error();
         return null;
     }
 }

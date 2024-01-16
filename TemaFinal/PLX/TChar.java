@@ -82,7 +82,6 @@ public class TChar extends Tipo {
             Objeto nObj = new Instancia(o.getNombre(),(Tipo) p.firstElement(), TablaSimbolos.bActual, false);
             return nObj;
         }
-        TablaSimbolos.Error();
         return null;
     }
 }

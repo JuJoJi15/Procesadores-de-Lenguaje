@@ -138,7 +138,6 @@ public class TFloat extends Tipo {
             }
         }
         }
-        TablaSimbolos.Error();
         return res;
     }
 }

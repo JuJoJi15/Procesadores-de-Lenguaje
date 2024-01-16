@@ -52,6 +52,7 @@ int | char | float     { return new Symbol(sym.TIPO, yytext()); }
 ('\\u[0-9A-Za-z]{4}') { return new Symbol(sym.CHAR, String.valueOf(Integer.parseInt(yytext().substring(3,yytext().length()-1), 16))); }
 ('[!-~]') { return new Symbol(sym.CHAR, String.valueOf(Integer.valueOf(yytext().charAt(1)))); }
 (0|[1-9][0-9]*) { return new Symbol(sym.ENTERO, yytext()); }
+[a-zA-Z][a-zA-Z0-9]*\.length            { return new Symbol(sym.LENGTH, yytext()); }
 [a-zA-Z][a-zA-Z0-9]*            { return new Symbol(sym.IDENT, yytext() ); }
 [\s\r]      {}
 [^]     { throw new Error("Illegal character <"+yytext()+">"); } 
