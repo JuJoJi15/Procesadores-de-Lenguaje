@@ -1,0 +1,50 @@
+   $a_length = 3;
+   if (0 < 0) goto L0;
+   if (3 < 0) goto L0;
+   if (3 == 0) goto L0;
+   goto L1;
+L0:
+   error;
+   halt;
+L1:
+   a[0] = 65;
+   if (1 < 0) goto L2;
+   if (3 < 1) goto L2;
+   if (3 == 1) goto L2;
+   goto L3;
+L2:
+   error;
+   halt;
+L3:
+   a[1] = 66;
+   if (2 < 0) goto L4;
+   if (3 < 2) goto L4;
+   if (3 == 2) goto L4;
+   goto L5;
+L4:
+   error;
+   halt;
+L5:
+   a[2] = 67;
+   i = 0;
+L6:
+   if (i < $a_length) goto L7;
+   goto L8;
+L9:
+   $t0 = i + 1;
+   i = $t0;
+   goto L6;
+L7:
+   if (i < 0) goto L10;
+   if (3 < i) goto L10;
+   if (3 == i) goto L10;
+   goto L11;
+L10:
+   error;
+   halt;
+L11:
+   $t1 = a[i];
+   printc $t1;
+   goto L9;
+L8:
+   print $a_length;

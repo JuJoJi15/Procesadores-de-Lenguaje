@@ -1,0 +1,42 @@
+a_length = 3;
+if (0 < 0) goto L1;
+if (3 < 0) goto L1;
+if (3 == 0) goto L1;
+goto L0;
+L1:
+error;
+halt;
+L0:
+a[0]=65;
+if (1 < 0) goto L3;
+if (3 < 1) goto L3;
+if (3 == 1) goto L3;
+goto L2;
+L3:
+error;
+halt;
+L2:
+a[1]=66;
+if (2 < 0) goto L5;
+if (3 < 2) goto L5;
+if (3 == 2) goto L5;
+goto L4;
+L5:
+error;
+halt;
+L4:
+a[2]=67;
+i=0;
+L6:
+if(i<a_length) goto L8;
+goto L9;
+L7:
+t0=i+1;
+i=t0;
+goto L6 ;
+L8:
+t1=a[i];
+printc t1;
+goto L7;
+L9:
+print a_length;
