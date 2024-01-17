@@ -69,6 +69,9 @@ action code {:
                res = TChar.getInstancia();
             }
             break;
+         case "string":
+               res = TString.getInstancia();
+               break;
          default:
             tablaS.Error();
             break;
@@ -94,6 +97,7 @@ terminal String     IDENT;
 terminal String     ENTERO;
 terminal String     FLOAT;
 terminal String     CHAR;
+terminal String     STRING;
 
 /* NO TERMINALES */
 
@@ -214,6 +218,7 @@ Lista_aux ::= IDENT:i                                      {:
 Expresion ::= ENTERO:e                                   {: Instancia o = new Instancia(e,TInt.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | FLOAT:f                                    {: Instancia o = new Instancia(f,TFloat.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | CHAR:c                                    {: Instancia o = new Instancia(c,TChar.getInstancia(),tablaS.bActual,false);RESULT = o; :}
+            | STRING:s                                   {: Instancia o = new Instancia(s,TString.getInstancia(),tablaS.bActual,false);RESULT = o; :}
             | IDENT:i                                    {: RESULT = tablaS.objeto(i); :}
             | IDENT:i AC Expresion:e CC                      {: Objeto obj = tablaS.objeto(i); Vector<Objeto> p = new Vector<Objeto>();Instancia o = new Instancia(e.getNombre(),TInt.getInstancia(),tablaS.bActual,false);p.add(o); RESULT = obj.metodos("obtener",p); :}
             | Expresion:e1 MAS Expresion:e2              {:

@@ -36,6 +36,7 @@ public class sym {
   public static final int MAYIG = 23;
   public static final int WHILE = 29;
   public static final int FLOAT = 36;
+  public static final int STRING = 38;
   public static final int DIVID = 5;
   public static final int ALL = 14;
   public static final int AP = 12;
@@ -82,7 +83,8 @@ public class sym {
   "IDENT",
   "ENTERO",
   "FLOAT",
-  "CHAR"
+  "CHAR",
+  "STRING"
   };
 }
 

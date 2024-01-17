@@ -51,7 +51,7 @@ public class TablaSimbolos {
         }
         bActual--;
     }
-    public void addTam(Objeto o, int t){
+    public static void addTam(Objeto o, int t){
         tablaT.put(o.getNombre(), t);
     }
 

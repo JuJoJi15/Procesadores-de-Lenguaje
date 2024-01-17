@@ -47,8 +47,9 @@ while   { return new Symbol(sym.WHILE, yytext()); }
 do      { return new Symbol(sym.DO, yytext()); }
 for     { return new Symbol(sym.FOR, yytext()); }
 print   { return new Symbol(sym.PRINT, yytext()); }
-int | char | float     { return new Symbol(sym.TIPO, yytext()); }
+int | char | float | string    { return new Symbol(sym.TIPO, yytext()); }
 length            { return new Symbol(sym.LENGTH, yytext()); }
+\"[a-zA-Z0-9\\\"]*\" { return new Symbol(sym.STRING,yytext()); } //Cuidado con caracteres especiales
 (0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(E[+-][0-9]+)? { return new Symbol(sym.FLOAT, yytext()); }
 ('\\'')|('\\b')|('\\n')|('\\f')|('\\r')|('\\t')|('\\\\')|('\\\"') { return new Symbol(sym.CHAR, String.valueOf(Integer.valueOf(yytext().charAt(2)))); }
 ('\\u[0-9A-Za-z]{4}') { return new Symbol(sym.CHAR, String.valueOf(Integer.parseInt(yytext().substring(3,yytext().length()-1), 16))); }
