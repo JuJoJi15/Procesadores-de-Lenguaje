@@ -377,8 +377,8 @@ Expresion ::= ENTERO:e                                   {: Instancia o = new In
                                                             }
                                                          :}
             | IDENT:i PUNTO LENGTH:l {: RESULT = new Instancia(i+"_"+l,TInt.getInstancia(),0,false); :}
-            | IDENT:i1 PUNTO IDENT:i2 ASIGNA Expresion:e
-            | IDENT:i1 PUNTO IDENT:i2
+            | IDENT:i1 PUNTO IDENT:i2  ASIGNA Expresion:e {: o = i1.metodos("obtener",i2); o.metodos("asigna",e); :}
+            | IDENT:i1 PUNTO IDENT:i2 {: i1.metodos("obtener",i2); :}
             | 
             ;
 
