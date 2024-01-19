@@ -1,14 +1,14 @@
 import java.util.Vector;
 
-public class TMChar extends Tipo {
-    private static TMChar instancia = new TMChar();
+public class TMFloat extends Tipo {
+    private static TMFloat instancia = new TMFloat();
     public int tam;
     
-    private TMChar() {
-        super("mchar", 0);
+    private TMFloat() {
+        super("mfloat", 0);
     }
 
-    public static TMChar getInstancia() {
+    public static TMFloat getInstancia() {
         return instancia;
     }
 
@@ -32,13 +32,13 @@ public class TMChar extends Tipo {
             if (!(p.firstElement() instanceof Instancia)) {
                 TablaSimbolos.Error();
             }
-            if ((((Instancia) p.firstElement())).getTipo() != TChar.getInstancia()) {
+            if ((((Instancia) p.firstElement())).getTipo() != TFloat.getInstancia()) {
                 TablaSimbolos.Error();
             }
             if (!o.isMutable()) {
                 TablaSimbolos.Error();
             }
-            if((((Instancia) p.firstElement())).getTipo() == TChar.getInstancia()){
+            if((((Instancia) p.firstElement())).getTipo() == TFloat.getInstancia()){
                 PLXC.out.println(o.getNombre()+"["+p.lastElement().getNombre()+ "]=" + p.firstElement().getNombre() + ";");
             }
             
@@ -51,16 +51,13 @@ public class TMChar extends Tipo {
             if (!(p.firstElement() instanceof Instancia)) {
                 TablaSimbolos.Error();
             }
-            if ((((Instancia) p.firstElement())).getTipo() != TMChar.getInstancia()) {
+            if ((((Instancia) p.firstElement())).getTipo() != TMFloat.getInstancia()) {
                 TablaSimbolos.Error();
             }
             if (!o.isMutable()) {
                 TablaSimbolos.Error();
             }
-            if((((Instancia) p.firstElement())).getTipo() == TMChar.getInstancia()){
-                if(Integer.valueOf(TablaSimbolos.getTam(o))<Integer.valueOf(TablaSimbolos.getTam(p.firstElement()))){
-                    TablaSimbolos.Error();
-                }
+            if((((Instancia) p.firstElement())).getTipo() == TMFloat.getInstancia()){
                 PLXC.out.println(o.getNombre()+ "=" + p.firstElement().getNombre() + ";");
             }
             
@@ -69,18 +66,9 @@ public class TMChar extends Tipo {
             if(p.size() != 1){
                 TablaSimbolos.Error();
             }
-            Objeto nObj = new Instancia(Objeto.newNumObj(), TChar.getInstancia(), TablaSimbolos.bActual, false);
+            Objeto nObj = new Instancia(Objeto.newNumObj(), TFloat.getInstancia(), TablaSimbolos.bActual, false);
             PLXC.out.println(nObj.getNombre()+"=" + o.getNombre() + "["+p.firstElement().getNombre()+"];");
             return nObj;
-        }if(m.equals("print")){
-            for(int i = 0;i<Integer.parseInt(TablaSimbolos.getTam(o));i++){
-                Vector<Objeto> p2 = new Vector<Objeto>();
-                Instancia o2 = new Instancia(String.valueOf(i),TInt.getInstancia(),TablaSimbolos.bActual,false);
-                p2.add(o2);
-                PLXC.out.println();
-                Objeto obj = o.metodos("obtener",p2);
-                obj.metodos("print", p2);
-            }
         }
         return null;
     }

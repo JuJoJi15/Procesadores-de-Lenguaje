@@ -58,9 +58,6 @@ public class TMChar extends Tipo {
                 TablaSimbolos.Error();
             }
             if((((Instancia) p.firstElement())).getTipo() == TMChar.getInstancia()){
-                if(Integer.valueOf(TablaSimbolos.getTam(o))<Integer.valueOf(TablaSimbolos.getTam(p.firstElement()))){
-                    TablaSimbolos.Error();
-                }
                 PLXC.out.println(o.getNombre()+ "=" + p.firstElement().getNombre() + ";");
             }
             

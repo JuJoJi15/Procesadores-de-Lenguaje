@@ -72,6 +72,9 @@ action code {:
          case "string":
                res = TString.getInstancia();
                break;
+         case "struct":
+               res = Struct.getInstancia();
+               break;
          default:
             tablaS.Error();
             break;
@@ -85,13 +88,14 @@ action code {:
 
 /* TERMINALES */
 
-terminal            MAS, MENOS, MULT, DIVID, MENOSUNARIO, IGUAL, ASIGNA, NOT, DIF;
+terminal            MAS, MENOS, MULT, DIVID, MENOSUNARIO, IGUAL, ASIGNA, NOT, DIF, MASUMARIO;
 terminal String     LENGTH;
 terminal            AP, CP, ALL, CLL, AC, CC;
 terminal            COMA,PUNTO, PYC;
 terminal            MAYOR,MENOR,MAYIG,MENIG;
 terminal            AND, OR;
-terminal            IF, ELSE, WHILE, DO, FOR, PRINT;
+terminal            IF, ELSE, WHILE, DO, FOR, PRINT, REPEAT, JUST;
+terminal            STRUCT;
 terminal String     TIPO;
 terminal String     IDENT;
 terminal String     ENTERO;
@@ -101,22 +105,24 @@ terminal String     STRING;
 
 /* NO TERMINALES */
 
-    non terminal Lista_de_sent;
-    non terminal Sentencia;
+    non terminal Vector<Objeto> Lista_de_sent;
+    non terminal Vector<Objeto> Sentencia;
     non terminal Asignacion;
-    non terminal ArrayList<String> Declaracion;
-    non terminal Lista;
-    non terminal Lista_aux;
+    non terminal Vector<Objeto> Declaracion;
+    non terminal Vector<Objeto> Lista;
+    non terminal Objeto Lista_aux;
+    non terminal String nom_obj;
     non terminal ArrayList<Objeto> Matriz_aux;
     non terminal Objeto Expresion;
     non terminal ParEt Condicion;
     non terminal String etiq_salto;
     non terminal ParEt etiq_bucle;
     non terminal else_If;
+    non terminal Struct_aux;
 
 /* Precedencia */
 
-precedence left IF, ELSE, DO, WHILE, FOR, PRINT;
+precedence left IF, ELSE, DO, WHILE, FOR, PRINT, REPEAT;
 precedence left MAS,MENOS;
 precedence left MULT,DIVID;
 precedence left IGUAL, MENIG, MAYIG;
@@ -125,7 +131,7 @@ precedence left OR;
 precedence left AND;
 precedence left NOT;
 precedence left IDENT, ENTERO, FLOAT;
-precedence left MENOSUNARIO;
+precedence left MENOSUNARIO, MASUMARIO;
 precedence left TIPO;
 precedence left AP, CP;
 precedence left AC, CC;
@@ -135,32 +141,35 @@ precedence left ALL,CLL;
 
 /* Gramatica */
 
-Lista_de_sent ::= Sentencia
-                | Lista_de_sent Sentencia
+Lista_de_sent ::= Sentencia:s {: RESULT = s; :}
+                | Lista_de_sent:l Sentencia:s {:if(s != null && l != null){l.addAll(s); RESULT = l;} :}
                 ;
 Sentencia ::= Expresion PYC  
-            | Declaracion PYC
+            | Declaracion :d PYC {: RESULT = d; :}
             | Asignacion PYC
             | IF etiq_salto:e AP Condicion:c CP {: PLXC.out.println(c.sv+":"); :} Sentencia  {: PLXC.out.println("goto "+e+";");PLXC.out.println(c.sf +":"); :} else_If {: PLXC.out.println(e+":"); :}
             | WHILE etiq_salto:e {: PLXC.out.println(e+":"); :} AP Condicion:c CP {: PLXC.out.println(c.sv+":"); :} Sentencia {: PLXC.out.println("goto "+e+";");PLXC.out.println(c.sf+":"); :}
             | DO etiq_salto:e {: PLXC.out.println(e+":"); :} Sentencia WHILE AP Condicion:c CP {: PLXC.out.println(c.sv+":");PLXC.out.println("goto "+e+";"); :} PYC {: PLXC.out.println(c.sf+":"); :}  
             | FOR etiq_bucle:e AP Expresion:e1 PYC {: PLXC.out.println(e.sv+":"); :} Condicion:c PYC {: PLXC.out.println(e.sf+":"); :} Expresion:e2 {: PLXC.out.println("goto "+e.sv+" ;"); :} CP {: PLXC.out.println(c.sv+":"); :} Sentencia  {: PLXC.out.println("goto "+e.sf+";");PLXC.out.println(c.sf+":"); :}
             | PRINT AP Expresion:e CP PYC {: Vector<Objeto> p = new Vector<Objeto>();e.metodos("print",p); :}
+            | REPEAT AP Expresion:e1 CP nom_obj:cont etiq_bucle:e {: PLXC.out.println("$"+cont+" = 1;");PLXC.out.println(e.sf+":");PLXC.out.println("if("+e1.getNombre()+"< $"+cont+") goto "+e.sv+";"); :} Sentencia {: PLXC.out.println("$"+cont+" = $"+cont+" + 1;");PLXC.out.println("goto "+e.sf+";");PLXC.out.println(e.sv+":"); :}
+            | REPEAT JUST  etiq_bucle:e AP Expresion:e1 CP {: String cont = Objeto.newNumObj();String v = Objeto.newNumObj();PLXC.out.println("$"+v+" = "+e1.getNombre()+";");PLXC.out.println(e.sf+":");PLXC.out.println("$"+cont+" = $"+cont+" + 1;");PLXC.out.println("if($"+v+"< $"+cont+") goto "+e.sv+";"); :} Sentencia {: PLXC.out.println("goto "+e.sf+";");PLXC.out.println(e.sv+":"); :}
             | PRINT AP ALL Matriz_aux:m CLL CP {: m = reversa(m);for(Objeto o:m){Vector<Objeto> p = new Vector<Objeto>();o.metodos("print",p);} :}
-            | ALL {:  tablaS.newBloque(); :} Lista_de_sent CLL {: tablaS.borrarBloque(); :}
+            | ALL {:  tablaS.newBloque(); :} Lista_de_sent:l CLL {: tablaS.borrarBloque(); RESULT = l; :}
             ;
 
 
-
-Declaracion ::= TIPO:t {: tipoD = t; :} Lista {: tipoD = ""; :} ;
-Lista ::=     Lista_aux COMA Lista
-            | Lista_aux   
+Declaracion ::= TIPO:t {: tipoD = t; :} Lista:l {: tipoD = ""; RESULT = l; :} 
+              | STRUCT Sentencia:e {: tipoD = "struct"; :} Lista:l {: for(Objeto o:l){o.metodos("anadir",e);tablaS.addObj(o);} :};
+Lista ::=     Lista_aux:o COMA Lista:l {: l.add(o);RESULT = l; :}
+            | Lista_aux:o  {: Vector<Objeto> l = new Vector<Objeto>(); l.add(o);RESULT = l; :} 
             ;
 
 Lista_aux ::= IDENT:i                                      {: 
                                                               if(!tablaS.contiene(i)){
                                                                   Instancia o = new Instancia(i,getTipo(false),tablaS.bActual,true);
                                                                   tablaS.addObj(o);
+                                                                  RESULT = o;
                                                                }else{ 
                                                                   tablaS.Error();
                                                                }
@@ -284,6 +293,10 @@ Expresion ::= ENTERO:e                                   {: Instancia o = new In
                                                              Vector<Objeto> p = new Vector<Objeto>();
                                                              RESULT = e1.metodos("menosUnario",p);
                                                          :} %prec MENOSUNARIO
+            |MAS Expresion:e1                            {:
+                                                            Vector<Objeto> p = new Vector<Objeto>();
+                                                            RESULT = e1.metodos("masUnario",p);
+                                                         :} %prec MASUMARIO
             | AP Expresion:e CP                          {: RESULT = e; :}
             | IDENT:i ASIGNA Expresion:e                  {: 
                                                              if (!tablaS.contiene(i)) {
@@ -364,8 +377,14 @@ Expresion ::= ENTERO:e                                   {: Instancia o = new In
                                                             }
                                                          :}
             | IDENT:i PUNTO LENGTH:l {: RESULT = new Instancia(i+"_"+l,TInt.getInstancia(),0,false); :}
-            |
+            | IDENT:i1 PUNTO IDENT:i2 ASIGNA Expresion:e
+            | IDENT:i1 PUNTO IDENT:i2
+            | 
             ;
+
+Struct_aux ::= IDENT:i PUNTO Struct_aux 
+             |IDENT:i
+             ; 
 
 Matriz_aux ::= Expresion:e COMA Matriz_aux:m   {: m.add(e); RESULT = m; :}
             | Expresion:e {:  ArrayList<Objeto> m = new ArrayList<Objeto>();m.add(e); RESULT = m; :}
@@ -389,3 +408,4 @@ else_If        ::=  ELSE Sentencia
                  ;
 etiq_salto ::= {: RESULT = tablaS.newEtiq(); :};
 etiq_bucle ::= {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());RESULT = e; :};
+nom_obj    ::= {: RESULT = Objeto.newNumObj(); :} ;

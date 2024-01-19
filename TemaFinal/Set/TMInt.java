@@ -1,14 +1,14 @@
 import java.util.Vector;
 
-public class TMChar extends Tipo {
-    private static TMChar instancia = new TMChar();
+public class TMInt extends Tipo {
+    private static TMInt instancia = new TMInt();
     public int tam;
     
-    private TMChar() {
-        super("mchar", 0);
+    private TMInt() {
+        super("mint", 0);
     }
 
-    public static TMChar getInstancia() {
+    public static TMInt getInstancia() {
         return instancia;
     }
 
@@ -32,44 +32,21 @@ public class TMChar extends Tipo {
             if (!(p.firstElement() instanceof Instancia)) {
                 TablaSimbolos.Error();
             }
-            if ((((Instancia) p.firstElement())).getTipo() != TChar.getInstancia()) {
+            if ((((Instancia) p.firstElement())).getTipo() != TInt.getInstancia()) {
                 TablaSimbolos.Error();
             }
             if (!o.isMutable()) {
                 TablaSimbolos.Error();
             }
-            if((((Instancia) p.firstElement())).getTipo() == TChar.getInstancia()){
+            if((((Instancia) p.firstElement())).getTipo() == TInt.getInstancia()){
                 PLXC.out.println(o.getNombre()+"["+p.lastElement().getNombre()+ "]=" + p.firstElement().getNombre() + ";");
             }
-            
-            return p.firstElement();
-        }if (m.equals("asigna")) {
-            if (p.size() != 1) {
-                TablaSimbolos.Error();
-            }
-            
-            if (!(p.firstElement() instanceof Instancia)) {
-                TablaSimbolos.Error();
-            }
-            if ((((Instancia) p.firstElement())).getTipo() != TMChar.getInstancia()) {
-                TablaSimbolos.Error();
-            }
-            if (!o.isMutable()) {
-                TablaSimbolos.Error();
-            }
-            if((((Instancia) p.firstElement())).getTipo() == TMChar.getInstancia()){
-                if(Integer.valueOf(TablaSimbolos.getTam(o))<Integer.valueOf(TablaSimbolos.getTam(p.firstElement()))){
-                    TablaSimbolos.Error();
-                }
-                PLXC.out.println(o.getNombre()+ "=" + p.firstElement().getNombre() + ";");
-            }
-            
             return p.firstElement();
         }if(m.equals("obtener")){
             if(p.size() != 1){
                 TablaSimbolos.Error();
             }
-            Objeto nObj = new Instancia(Objeto.newNumObj(), TChar.getInstancia(), TablaSimbolos.bActual, false);
+            Objeto nObj = new Instancia(Objeto.newNumObj(), TInt.getInstancia(), TablaSimbolos.bActual, false);
             PLXC.out.println(nObj.getNombre()+"=" + o.getNombre() + "["+p.firstElement().getNombre()+"];");
             return nObj;
         }if(m.equals("print")){
@@ -81,6 +58,23 @@ public class TMChar extends Tipo {
                 Objeto obj = o.metodos("obtener",p2);
                 obj.metodos("print", p2);
             }
+        }if(m.equals("asigna")){
+            if (p.size() != 1) {
+                TablaSimbolos.Error();
+            }
+            if (!(p.firstElement() instanceof Instancia)) {
+                TablaSimbolos.Error();
+            }
+            if ((((Instancia) p.firstElement())).getTipo() != instancia) {
+                TablaSimbolos.Error();
+            }
+            if (!o.isMutable()) {
+                TablaSimbolos.Error();
+            }
+            if((((Instancia) p.firstElement())).getTipo() == instancia){
+                PLXC.out.println(o.getNombre() + "=" + p.firstElement().getNombre() + ";");
+            }
+            return p.firstElement();
         }
         return null;
     }
