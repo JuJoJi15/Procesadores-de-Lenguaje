@@ -1,0 +1,40 @@
+   goto L0;
+L0:
+   no = 1;
+   goto L2;
+L1:
+   no = 0;
+L2:
+   if (0 < no) goto L3;
+   goto L4;
+L3:
+   si = 1;
+   goto L5;
+L4:
+   si = 0;
+L5:
+   if (1 == si) goto L6;
+   goto L7;
+L6:
+   if (1 == no) goto L8;
+   goto L9;
+L7:
+   goto L9;
+L8:
+   print 1;
+   if (1 == si) goto L11;
+   goto L12;
+L12:
+   if (1 == no) goto L13;
+   goto L14;
+L11:
+   goto L13;
+L13:
+   print 2;
+   goto L15;
+L14:
+L15:
+   goto L10;
+L9:
+L10:
+   print 3;

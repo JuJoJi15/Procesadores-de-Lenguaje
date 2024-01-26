@@ -1,0 +1,8 @@
+n=5;
+$t0 = 1;
+L1:
+if(n< $t0) goto L0;
+print n;
+$t0 = t0 + 1;
+goto L1;
+L0:

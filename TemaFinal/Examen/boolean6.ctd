@@ -1,0 +1,7 @@
+goto L0;
+L0:
+no= 1;
+goto L2;
+L1:
+no= 0;
+L2:

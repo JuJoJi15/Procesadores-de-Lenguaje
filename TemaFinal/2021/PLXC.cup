@@ -1,0 +1,411 @@
+import java.io.IOException;
+import java_cup.runtime.*;
+import java.util.*;
+parser code {:
+
+ public void syntax_error(Symbol cur_token){
+	}
+
+ public void unrecovered_syntax_error(Symbol cur_token){
+        System.err.println("Syntax error en linea" + PLXC.lex.getLine() + ", columna " + PLXC.lex.getColumna() + " con el token "+ sym.terminalNames[cur_token.sym]);
+        // report_error("Syntax error", null);
+        done_parsing();
+    }
+
+:}
+
+action code {:
+
+    private int nVar = 0;
+    class ParEt{public String sv,sf;
+
+      public ParEt(String v,String f){
+        sv = v;
+        sf = f;
+      }
+
+    }
+
+    public void MatrizComprobar(String s,String t){
+      ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());
+      PLXC.out.println("if ("+s+" < 0) goto "+e.sf+";");
+      PLXC.out.println("if ("+t+" < "+ s+") goto "+e.sf+";");
+      PLXC.out.println("if ("+t+" == "+ s+") goto "+e.sf+";");
+      PLXC.out.println("goto "+e.sv+";");
+      PLXC.out.println(e.sf+":");
+      tablaS.Error();
+      PLXC.out.println(e.sv+":");
+
+    }
+    public ArrayList<Objeto> reversa(ArrayList<Objeto> m){
+      ArrayList<Objeto> res = new ArrayList<Objeto>();
+      for(int i = m.size()-1;i>=0;i--){
+         res.add(m.get(i));
+      }
+      return res;
+    }
+    public String tipoD;
+    public Tipo getTipo(boolean matriz){
+      Tipo res = null;
+      switch(tipoD){
+         case "int":
+            if(matriz){
+               res = TMInt.getInstancia();
+            }else{
+               res = TInt.getInstancia();
+            }
+            break;
+         case "float":
+            if(matriz){
+               res = TMFloat.getInstancia();
+            }else{
+               res = TFloat.getInstancia();
+            }
+            break;
+         case "char":
+            if(matriz){
+               res = TMChar.getInstancia();
+            }else{
+               res = TChar.getInstancia();
+            }
+            break;
+         case "string":
+               res = TString.getInstancia();
+               break;
+         case "struct":
+               res = Struct.getInstancia();
+               break;
+         default:
+            tablaS.Error();
+            break;
+      }
+      return res;
+    }
+
+    public TablaSimbolos tablaS = new TablaSimbolos();
+
+:}
+
+/* TERMINALES */
+
+terminal            MAS, MENOS, MULT, DIVID, MENOSUNARIO, IGUAL, ASIGNA, NOT, DIF, MASUMARIO;
+terminal String     LENGTH;
+terminal            AP, CP, ALL, CLL, AC, CC;
+terminal            COMA,PUNTO, PYC;
+terminal            MAYOR,MENOR,MAYIG,MENIG;
+terminal            AND, OR;
+terminal            IF, ELSE, WHILE, DO, FOR, PRINT, REPEAT, JUST;
+terminal            STRUCT;
+terminal String     TIPO;
+terminal String     IDENT;
+terminal String     ENTERO;
+terminal String     FLOAT;
+terminal String     CHAR;
+terminal String     STRING;
+
+/* NO TERMINALES */
+
+    non terminal Vector<Objeto> Lista_de_sent;
+    non terminal Vector<Objeto> Sentencia;
+    non terminal Asignacion;
+    non terminal Vector<Objeto> Declaracion;
+    non terminal Vector<Objeto> Lista;
+    non terminal Objeto Lista_aux;
+    non terminal String nom_obj;
+    non terminal ArrayList<Objeto> Matriz_aux;
+    non terminal Objeto Expresion;
+    non terminal ParEt Condicion;
+    non terminal String etiq_salto;
+    non terminal ParEt etiq_bucle;
+    non terminal else_If;
+    non terminal Struct_aux;
+
+/* Precedencia */
+
+precedence left IF, ELSE, DO, WHILE, FOR, PRINT, REPEAT;
+precedence left MAS,MENOS;
+precedence left MULT,DIVID;
+precedence left IGUAL, MENIG, MAYIG;
+precedence left DIF, MENOR, MAYOR;
+precedence left OR;
+precedence left AND;
+precedence left NOT;
+precedence left IDENT, ENTERO, FLOAT;
+precedence left MENOSUNARIO, MASUMARIO;
+precedence left TIPO;
+precedence left AP, CP;
+precedence left AC, CC;
+precedence left ALL,CLL;
+
+
+
+/* Gramatica */
+
+Lista_de_sent ::= Sentencia:s {: RESULT = s; :}
+                | Lista_de_sent:l Sentencia:s {:if(s != null && l != null){l.addAll(s); RESULT = l;} :}
+                ;
+Sentencia ::= Expresion PYC  
+            | Declaracion :d PYC {: RESULT = d; :}
+            | Asignacion PYC
+            | IF etiq_salto:e AP Condicion:c CP {: PLXC.out.println(c.sv+":"); :} Sentencia  {: PLXC.out.println("goto "+e+";");PLXC.out.println(c.sf +":"); :} else_If {: PLXC.out.println(e+":"); :}
+            | WHILE etiq_salto:e {: PLXC.out.println(e+":"); :} AP Condicion:c CP {: PLXC.out.println(c.sv+":"); :} Sentencia {: PLXC.out.println("goto "+e+";");PLXC.out.println(c.sf+":"); :}
+            | DO etiq_salto:e {: PLXC.out.println(e+":"); :} Sentencia WHILE AP Condicion:c CP {: PLXC.out.println(c.sv+":");PLXC.out.println("goto "+e+";"); :} PYC {: PLXC.out.println(c.sf+":"); :}  
+            | FOR etiq_bucle:e AP Expresion:e1 PYC {: PLXC.out.println(e.sv+":"); :} Condicion:c PYC {: PLXC.out.println(e.sf+":"); :} Expresion:e2 {: PLXC.out.println("goto "+e.sv+" ;"); :} CP {: PLXC.out.println(c.sv+":"); :} Sentencia  {: PLXC.out.println("goto "+e.sf+";");PLXC.out.println(c.sf+":"); :}
+            | PRINT AP Expresion:e CP PYC {: Vector<Objeto> p = new Vector<Objeto>();e.metodos("print",p); :}
+            | REPEAT AP Expresion:e1 CP nom_obj:cont etiq_bucle:e {: PLXC.out.println("$"+cont+" = 1;");PLXC.out.println(e.sf+":");PLXC.out.println("if("+e1.getNombre()+"< $"+cont+") goto "+e.sv+";"); :} Sentencia {: PLXC.out.println("$"+cont+" = $"+cont+" + 1;");PLXC.out.println("goto "+e.sf+";");PLXC.out.println(e.sv+":"); :}
+            | REPEAT JUST  etiq_bucle:e AP Expresion:e1 CP {: String cont = Objeto.newNumObj();String v = Objeto.newNumObj();PLXC.out.println("$"+v+" = "+e1.getNombre()+";");PLXC.out.println(e.sf+":");PLXC.out.println("$"+cont+" = $"+cont+" + 1;");PLXC.out.println("if($"+v+"< $"+cont+") goto "+e.sv+";"); :} Sentencia {: PLXC.out.println("goto "+e.sf+";");PLXC.out.println(e.sv+":"); :}
+            | PRINT AP ALL Matriz_aux:m CLL CP {: m = reversa(m);for(Objeto o:m){Vector<Objeto> p = new Vector<Objeto>();o.metodos("print",p);} :}
+            | ALL {:  tablaS.newBloque(); :} Lista_de_sent:l CLL {: tablaS.borrarBloque(); RESULT = l; :}
+            ;
+
+
+Declaracion ::= TIPO:t {: tipoD = t; :} Lista:l {: tipoD = ""; RESULT = l; :} 
+              | STRUCT Sentencia:e {: tipoD = "struct"; :} Lista:l {: for(Objeto o:l){o.metodos("anadir",e);tablaS.addObj(o);} :};
+Lista ::=     Lista_aux:o COMA Lista:l {: l.add(o);RESULT = l; :}
+            | Lista_aux:o  {: Vector<Objeto> l = new Vector<Objeto>(); l.add(o);RESULT = l; :} 
+            ;
+
+Lista_aux ::= IDENT:i                                      {: 
+                                                              if(!tablaS.contiene(i)){
+                                                                  Instancia o = new Instancia(i,getTipo(false),tablaS.bActual,true);
+                                                                  tablaS.addObj(o);
+                                                                  RESULT = o;
+                                                               }else{ 
+                                                                  tablaS.Error();
+                                                               }
+                                                           :}
+            | IDENT:i ASIGNA Expresion:e                    {:
+
+                                                             if(!tablaS.contiene(i)){
+                                                                  Instancia o = new Instancia(i,getTipo(false),tablaS.bActual,true);
+                                                                  tablaS.addObj(o);
+                                                               }else{ 
+                                                                  tablaS.Error();
+                                                               }
+                                                             Objeto o = tablaS.objeto(i);
+                                                             if (!(o instanceof Instancia)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             p.add(e);
+                                                             o.metodos("asigna", p);
+                                                         :}
+            | IDENT:i AC ENTERO:e CC                     {:
+                                                              if(!tablaS.contiene(i)){
+                                                                  Instancia o = new Instancia(i,getTipo(true),tablaS.bActual,true);
+                                                                  tablaS.addObj(o);
+                                                                  tablaS.addTam(o,Integer.parseInt(e));
+                                                                  PLXC.out.println(i+"_length = "+e+";");
+
+                                                               }else{ 
+                                                                  tablaS.Error();
+                                                               }
+                                                         :}
+            | IDENT:i AC ENTERO:e CC ASIGNA ALL Matriz_aux:m CLL  {:
+                                                              if(!tablaS.contiene(i)){
+                                                                  Instancia o = new Instancia(i,getTipo(true),tablaS.bActual,true);
+                                                                  tablaS.addObj(o);
+                                                                  tablaS.addTam(o,Integer.parseInt(e));
+                                                                  PLXC.out.println(i+"_length = "+e+";");
+                                                                  m = reversa(m);
+                                                                  int pos = 0;
+                                                                  for(Objeto v: m){
+                                                                     Vector<Objeto> p = new Vector<Objeto>();
+                                                                     p.add(v);
+                                                                     Instancia tam = new Instancia(String.valueOf(pos),TInt.getInstancia(),0,false);
+                                                                     p.add(tam);
+                                                                     o.metodos("asignaInd", p);
+                                                                     pos++;
+                                                                  }
+                                                               }else{ 
+                                                                  tablaS.Error();
+                                                               }
+                                                         :}
+            | IDENT:i AC IDENT:o CC {: tablaS.Error(); :}
+            ;
+
+Expresion ::= ENTERO:e                                   {: Instancia o = new Instancia(e,TInt.getInstancia(),tablaS.bActual,false);RESULT = o; :}
+            | FLOAT:f                                    {: Instancia o = new Instancia(f,TFloat.getInstancia(),tablaS.bActual,false);RESULT = o; :}
+            | CHAR:c                                    {: Instancia o = new Instancia(c,TChar.getInstancia(),tablaS.bActual,false);RESULT = o; :}
+            | STRING:s                                   {: Instancia o = new Instancia(s,TString.getInstancia(),tablaS.bActual,false);RESULT = o; :}
+            | IDENT:i                                    {: RESULT = tablaS.objeto(i); :}
+            | IDENT:i AC Expresion:e CC                      {: Objeto obj = tablaS.objeto(i); Vector<Objeto> p = new Vector<Objeto>();Instancia o = new Instancia(e.getNombre(),TInt.getInstancia(),tablaS.bActual,false);p.add(o); RESULT = obj.metodos("obtener",p); :}
+            | Expresion:e1 MAS Expresion:e2              {:
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             if(((Instancia) e1).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("suma", p);
+                                                             }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("suma", p);
+                                                             }else if(((Instancia) e1).getTipo() == TInt.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("suma",p);
+                                                             }else if(((Instancia) e2).getTipo() == TInt.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("suma",p);
+                                                             }else{
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("suma", p);
+                                                             }
+                                                             
+                                                         :}
+            | Expresion:e1 MENOS Expresion:e2              {:
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             if(((Instancia) e1).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("resta", p);
+                                                             }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("resta", p);
+                                                             }else{
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("resta", p);
+                                                             }
+                                                         :}
+            | Expresion:e1 MULT Expresion:e2              {:
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             if(((Instancia) e1).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("multiplicar", p);
+                                                             }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("multiplicar", p);
+                                                             }else{
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("multiplicar", p);
+                                                             }
+                                                         :}
+            | Expresion:e1 DIVID Expresion:e2              {:
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             if(((Instancia) e1).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("dividir", p);
+                                                             }else if(((Instancia) e2).getTipo() == TFloat.getInstancia()){
+                                                                p.add(e1);
+                                                                RESULT = e2.metodos("dividir", p);
+                                                             }else{
+                                                                p.add(e2);
+                                                                RESULT = e1.metodos("dividir", p);
+                                                             }
+                                                         :}                                             
+            |MENOS Expresion:e1                          {:
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             RESULT = e1.metodos("menosUnario",p);
+                                                         :} %prec MENOSUNARIO
+            |MAS Expresion:e1                            {:
+                                                            Vector<Objeto> p = new Vector<Objeto>();
+                                                            RESULT = e1.metodos("masUnario",p);
+                                                         :} %prec MASUMARIO
+            | AP Expresion:e CP                          {: RESULT = e; :}
+            | IDENT:i ASIGNA Expresion:e                  {: 
+                                                             if (!tablaS.contiene(i)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             Objeto o = tablaS.objeto(i);
+                                                             if (!(o instanceof Instancia)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             p.add(e);
+                                                             RESULT = o.metodos("asigna", p);
+                                                         :}
+
+            | IDENT:i AC Expresion:e1 CC ASIGNA Expresion:e2                  {: 
+                                                             
+
+                                                             
+                                                             if (!tablaS.contiene(i)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             Objeto o = tablaS.objeto(i);
+                                                             if (!(o instanceof Instancia)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             MatrizComprobar(e1.getNombre(),tablaS.getTam(o));
+                                                             Vector<Objeto> p = new Vector<Objeto>();
+                                                             if(((Instancia) o).getTipo() == TMFloat.getInstancia() && ((Instancia) e2).getTipo() == TInt.getInstancia()){
+                                                               Vector<Objeto> p2 = new Vector<Objeto>();
+                                                               p2.add(TFloat.getInstancia());
+                                                               e2 = e2.metodos("convertir",p2);
+                                                             }
+                                                             p.add(e2);
+                                                             Instancia tam = new Instancia(e1.getNombre(),TInt.getInstancia(),0,false);
+                                                             p.add(tam);
+                                                             RESULT = o.metodos("asignaInd", p);
+                                                         :}
+           
+            |AP TIPO:t CP Expresion:e                   {:
+                                                            Vector<Objeto> p = new Vector<Objeto>();
+                                                            switch(t){
+                                                                case "int":
+                                                                    p.add(TInt.getInstancia());
+                                                                    break;
+                                                                case "float":
+                                                                    p.add(TFloat.getInstancia());
+                                                                    break;
+                                                                case "char":
+                                                                    p.add(TChar.getInstancia());
+                                                                    break;
+                                                                default:
+                                                                    TablaSimbolos.Error();
+                                                                    break;
+                                                            }
+                                                            RESULT = e.metodos("convertir", p);
+            
+                                                         :}
+            | IDENT:i ASIGNA ALL Matriz_aux:m CLL        {:
+                                                            if (!tablaS.contiene(i)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             Objeto o = tablaS.objeto(i);
+                                                             if (!(o instanceof Instancia)) {
+                                                                tablaS.Error();
+                                                             }
+                                                             if(m.size()>Integer.valueOf(tablaS.getTam(o))){
+                                                               tablaS.Error();
+                                                             }
+                                                             m = reversa(m);
+                                                             int pos = 0;
+                                                            for(Objeto v: m){
+                                                                Vector<Objeto> p = new Vector<Objeto>();
+                                                                p.add(v);
+                                                                Instancia tam = new Instancia(String.valueOf(pos),TInt.getInstancia(),0,false);
+                                                                p.add(tam);
+                                                                o.metodos("asignaInd", p);
+                                                                pos++;
+                                                            }
+                                                         :}
+            | IDENT:i PUNTO LENGTH:l {: RESULT = new Instancia(i+"_"+l,TInt.getInstancia(),0,false); :}
+            | IDENT:i1 PUNTO IDENT:i2  ASIGNA Expresion:e {: o = i1.metodos("obtener",i2); o.metodos("asigna",e); :}
+            | IDENT:i1 PUNTO IDENT:i2 {: i1.metodos("obtener",i2); :}
+            | 
+            ;
+
+Struct_aux ::= IDENT:i PUNTO Struct_aux 
+             |IDENT:i
+             ; 
+
+Matriz_aux ::= Expresion:e COMA Matriz_aux:m   {: m.add(e); RESULT = m; :}
+            | Expresion:e {:  ArrayList<Objeto> m = new ArrayList<Objeto>();m.add(e); RESULT = m; :}
+            ;
+
+Condicion ::= Expresion:e1 IGUAL Expresion:e2  {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"=="+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
+            | Expresion:e1 DIF Expresion:e2  {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"=="+e2.getNombre()+") goto "+e.sf+";");PLXC.out.println("goto "+e.sv+";");RESULT = e; :}
+            | Expresion:e1 MENOR Expresion:e2   {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"<"+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
+            | Expresion:e1 MENIG Expresion:e2  {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"=="+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("if("+e1.getNombre()+"<"+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
+            | Expresion:e1 MAYOR Expresion:e2   {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e2.getNombre()+"<"+e1.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :}
+            | Expresion:e1 MAYIG Expresion:e2 {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println("if("+e1.getNombre()+"=="+e2.getNombre()+") goto "+e.sv+";");PLXC.out.println("if("+e2.getNombre()+"<"+e1.getNombre()+") goto "+e.sv+";");PLXC.out.println("goto "+e.sf+";");RESULT = e; :} 
+            | NOT Condicion:c {: ParEt p = new ParEt(c.sf,c.sv);RESULT = p; :}
+            | Condicion:c1 AND {: PLXC.out.println(c1.sv+":"); :} Condicion:c2 {: ParEt p = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println(c2.sv+":"); PLXC.out.println("goto "+p.sv+";");PLXC.out.println(c1.sf+":");PLXC.out.println(c2.sf+":");PLXC.out.println("goto "+p.sf+";");RESULT = p; :}
+            | Condicion:c1 OR {: PLXC.out.println(c1.sf+":"); :} Condicion:c2 {: ParEt p = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());PLXC.out.println(c2.sf+":"); PLXC.out.println("goto "+p.sf+";");PLXC.out.println(c1.sv+":");PLXC.out.println(c2.sv+":");PLXC.out.println("goto "+p.sv+";");RESULT = p; :}
+            | AP Condicion:c CP {: RESULT = c; :}
+            ;
+
+
+else_If        ::=  ELSE Sentencia
+                 | 
+                 ;
+etiq_salto ::= {: RESULT = tablaS.newEtiq(); :};
+etiq_bucle ::= {: ParEt e = new ParEt(tablaS.newEtiq(),tablaS.newEtiq());RESULT = e; :};
+nom_obj    ::= {: RESULT = Objeto.newNumObj(); :} ;

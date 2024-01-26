@@ -1,0 +1,3 @@
+boolean p;
+print(p);
+

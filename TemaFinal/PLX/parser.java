@@ -1412,6 +1412,9 @@ class CUP$parser$actions {
                                                              if (!(o instanceof Instancia)) {
                                                                 tablaS.Error();
                                                              }
+                                                             if(m.size()>Integer.valueOf(tablaS.getTam(o))){
+                                                               tablaS.Error();
+                                                             }
                                                              m = reversa(m);
                                                              int pos = 0;
                                                             for(Objeto v: m){
