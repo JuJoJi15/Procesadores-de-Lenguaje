@@ -1,0 +1,16 @@
+x = 0;
+L2:
+if (10< x) goto L1;
+t0=x/2;
+t1=2*t0;
+t2=x-t1;
+if(t2==0) goto L3;
+goto L4;
+L3:
+x = x + 2;
+goto L2;
+L1:
+print 1;
+goto L0;
+L4:
+L0:

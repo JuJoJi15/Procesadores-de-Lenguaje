@@ -1,0 +1,54 @@
+if(1 == p) goto L1;
+goto L2;
+L1:
+if(1 == q) goto L3;
+goto L4;
+L3:
+if(1 == q) goto L5;
+goto L6;
+L6:
+goto L8;
+L4:
+L5:
+goto L7;
+L8:
+goto L10;
+L2:
+L7:
+goto L9;
+L9:
+print 1;
+goto L11;
+L11:
+p= 1;
+goto L13;
+L12:
+p= 0;
+L13:
+if(1 == p) goto L15;
+goto L16;
+L15:
+if(1 == q) goto L17;
+goto L18;
+L17:
+if(1 == q) goto L19;
+goto L20;
+L20:
+goto L22;
+L18:
+L19:
+goto L21;
+L22:
+goto L24;
+L16:
+L21:
+goto L23;
+L23:
+print 2;
+goto L14;
+L24:
+L14:
+goto L0;
+L10:
+L0:
+print 0;

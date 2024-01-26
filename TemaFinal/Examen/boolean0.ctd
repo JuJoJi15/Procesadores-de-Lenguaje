@@ -1,0 +1,9 @@
+if(1 == b) goto L1;
+goto L2;
+L1:
+print 1;
+goto L0;
+L2:
+print 2;
+L0:
+print 3;

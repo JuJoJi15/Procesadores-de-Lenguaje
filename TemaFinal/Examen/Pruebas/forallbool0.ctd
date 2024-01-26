@@ -1,0 +1,13 @@
+   p = 0;
+L0:
+   if (1 == p) goto L2;
+   goto L3;
+L2:
+   if (1 == p) goto L1;
+   p = 1;
+   goto L0;
+L1:
+   print 1;
+   goto L4;
+L3:
+L4:

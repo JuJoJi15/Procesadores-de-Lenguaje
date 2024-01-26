@@ -1,0 +1,112 @@
+x=12;
+y=15;
+z=20;
+if(x<15) goto L0;
+goto L1;
+L0:
+if(y<20) goto L2;
+goto L3;
+L2:
+goto L4;
+L1:
+L3:
+goto L5;
+L5:
+if(z<20) goto L6;
+goto L7;
+L7:
+goto L9;
+L4:
+L6:
+goto L8;
+L8:
+p= 1;
+goto L10;
+L9:
+p= 0;
+L10:
+if(x<15) goto L11;
+goto L12;
+L11:
+if(y<15) goto L13;
+goto L14;
+L13:
+goto L15;
+L12:
+L14:
+goto L16;
+L16:
+if(z<25) goto L17;
+goto L18;
+L18:
+goto L20;
+L15:
+L17:
+goto L19;
+L19:
+q= 1;
+goto L21;
+L20:
+q= 0;
+L21:
+if(1 == p) goto L23;
+goto L24;
+L23:
+if(1 == q) goto L25;
+goto L26;
+L25:
+goto L27;
+L24:
+L26:
+goto L28;
+L27:
+print 1;
+goto L22;
+L28:
+L22:
+if(1 == p) goto L30;
+goto L31;
+L31:
+if(1 == q) goto L32;
+goto L33;
+L33:
+goto L35;
+L30:
+L32:
+goto L34;
+L34:
+print 2;
+goto L29;
+L35:
+L29:
+if(1 == p) goto L37;
+goto L38;
+L37:
+if(1 == q) goto L39;
+goto L40;
+L40:
+goto L41;
+L38:
+L39:
+goto L42;
+L41:
+print 3;
+goto L36;
+L42:
+L36:
+if(1 == p) goto L44;
+goto L45;
+L44:
+if(1 == q) goto L46;
+goto L47;
+L47:
+goto L49;
+L45:
+L46:
+goto L48;
+L48:
+print 4;
+goto L43;
+L49:
+L43:
+print 5;

@@ -1,0 +1,77 @@
+   x = 12;
+   y = 15;
+   if (x < 15) goto L0;
+   goto L1;
+L0:
+   if (y < 20) goto L2;
+   goto L3;
+L1:
+   goto L3;
+L2:
+   p = 1;
+   goto L4;
+L3:
+   p = 0;
+L4:
+   if (x < 15) goto L5;
+   goto L6;
+L5:
+   if (y < 15) goto L7;
+   goto L8;
+L6:
+   goto L8;
+L7:
+   q = 1;
+   goto L9;
+L8:
+   q = 0;
+L9:
+   if (1 == p) goto L10;
+   goto L11;
+L10:
+   if (1 == q) goto L12;
+   goto L13;
+L11:
+   goto L13;
+L12:
+   print 1;
+   goto L14;
+L13:
+L14:
+   if (1 == p) goto L15;
+   goto L16;
+L16:
+   if (1 == q) goto L17;
+   goto L18;
+L15:
+   goto L17;
+L17:
+   print 2;
+   goto L19;
+L18:
+L19:
+   if (1 == p) goto L20;
+   goto L21;
+L20:
+   if (1 == q) goto L22;
+   goto L23;
+L21:
+   goto L22;
+L23:
+   print 3;
+   goto L24;
+L22:
+L24:
+   if (1 == p) goto L25;
+   goto L26;
+L25:
+   if (1 == q) goto L27;
+   goto L28;
+L26:
+   goto L27;
+L27:
+   print 4;
+   goto L29;
+L28:
+L29:
+   print 5;
